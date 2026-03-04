@@ -1,17 +1,12 @@
-import { motion } from 'framer-motion'
+import { DndContext } from '@dnd-kit/core'
 
 function App() {
   return (
-    <div className="flex h-screen items-center justify-center bg-gray-900">
-      <motion.h1
-        className="text-4xl font-bold text-white"
-        initial={{ opacity: 0, y: -20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.5 }}
-      >
-        WebDesk
-      </motion.h1>
-    </div>
+    <DndContext>
+      <div className="flex h-screen items-center justify-center bg-gray-900 text-white">
+        <h1 className="text-4xl font-bold">WebDesk</h1>
+      </div>
+    </DndContext>
   )
 }
 

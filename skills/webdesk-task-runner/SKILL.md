@@ -4,7 +4,7 @@ description: Arbeitet WebDesk-Tasks aus docs/epic*/task-*.md strikt sequentiell 
 ---
 
 # Workflow
-1. Lese `docs/task-state.json` im Repository-Root.
+1. Lese `skills/webdesk-task-runner/task-state.json` im Repository-Root.
 2. Bearbeite ausschliesslich den Task aus `current`.
 3. Starte keinen weiteren Task, solange `current` nicht als abgeschlossen markiert ist.
 

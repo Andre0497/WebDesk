@@ -1,0 +1,7 @@
+{
+  "scope": "epic1",
+  "current": "docs/epic1/task-1.2-tailwind.md",
+  "done": [
+    "docs/epic1/task-1.1-vite-react-ts.md"
+  ]
+}

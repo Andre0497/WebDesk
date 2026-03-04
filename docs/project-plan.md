@@ -18,7 +18,7 @@
 |---|---|---|---|---|
 | 1.1 | Vite + React + TS Projekt anlegen | `npm create vite@latest webdesk -- --template react-ts` | 🔴 Hoch | ✅ Erledigt |
 | 1.2 | Tailwind CSS installieren & konfigurieren | `tailwindcss`, `postcss`, `autoprefixer` einrichten | 🔴 Hoch | ✅ Erledigt |
-| 1.3 | ESLint + Prettier konfigurieren | `.eslintrc`, `.prettierrc` anlegen, Regeln definieren | 🟡 Mittel | ⬜ Offen |
+| 1.3 | ESLint + Prettier konfigurieren | `.eslintrc`, `.prettierrc` anlegen, Regeln definieren | 🟡 Mittel | ✅ Erledigt |
 | 1.4 | Framer Motion installieren | `npm install framer-motion` | 🔴 Hoch | ⬜ Offen |
 | 1.5 | dnd-kit installieren | `npm install @dnd-kit/core @dnd-kit/sortable @dnd-kit/utilities` | 🔴 Hoch | ⬜ Offen |
 | 1.6 | Heroicons & Headless UI installieren | `npm install @heroicons/react @headlessui/react` | 🟡 Mittel | ⬜ Offen |

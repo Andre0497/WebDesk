@@ -1,8 +1,9 @@
 {
   "scope": "epic1",
-  "current": "docs/epic1/task-1.3-eslint-prettier.md",
+  "current": "docs/epic1/task-1.4-framer-motion.md",
   "done": [
     "docs/epic1/task-1.1-vite-react-ts.md",
-    "docs/epic1/task-1.2-tailwind.md"
+    "docs/epic1/task-1.2-tailwind.md",
+    "docs/epic1/task-1.3-eslint-prettier.md"
   ]
 }

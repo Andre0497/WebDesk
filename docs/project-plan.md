@@ -22,8 +22,8 @@
 | 1.4 | Framer Motion installieren | `npm install framer-motion` | 🔴 Hoch | ✅ Erledigt |
 | 1.5 | dnd-kit installieren | `npm install @dnd-kit/core @dnd-kit/sortable @dnd-kit/utilities` | 🔴 Hoch | ✅ Erledigt |
 | 1.6 | Heroicons & Headless UI installieren | `npm install @heroicons/react @headlessui/react` | 🟡 Mittel | ✅ Erledigt |
-| 1.7 | Ordnerstruktur anlegen | `src/components`, `src/hooks`, `src/store`, `src/types`, `src/utils` | 🔴 Hoch | ⬜ Offen |
-| 1.8 | GitHub Repository & GitHub Pages CI anlegen | `gh-pages` Branch + GitHub Actions Workflow | 🟢 Niedrig | ⬜ Offen |
+| 1.7 | Ordnerstruktur anlegen | `src/components`, `src/hooks`, `src/store`, `src/types`, `src/utils` | 🔴 Hoch | ✅ Erledigt |
+| 1.8 | GitHub Repository & GitHub Pages CI anlegen | `gh-pages` Branch + GitHub Actions Workflow | 🟢 Niedrig | ✅ Erledigt |
 
 **Meilenstein M1:** `npm run dev` zeigt leere App ohne Fehler ✅
 

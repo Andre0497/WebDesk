@@ -1,5 +1,8 @@
-// TODO: Implementierung in Task 2.5
 export default function DesktopGrid() {
-  return null
+  return (
+    <div className="w-full h-full p-4">
+      {/* Wird in Task 2.5 implementiert */}
+    </div>
+  )
 }
 

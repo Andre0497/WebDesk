@@ -1,15 +1,41 @@
+import { PlusIcon, FolderPlusIcon } from '@heroicons/react/24/outline'
 import AnimatedBackground from './AnimatedBackground'
 import DesktopGrid from './DesktopGrid'
 import Taskbar from '../taskbar/Taskbar'
+import { useContextMenu } from '../../hooks/useContextMenu'
+import ContextMenu from '../ui/ContextMenu'
 
 export default function DesktopCanvas() {
+  const contextMenu = useContextMenu()
+
   const handleSettingsClick = () => {
     // Wird in Task 3.x (SettingsModal) implementiert
     console.log('Settings öffnen')
   }
 
+  const handleContextMenu = (e: React.MouseEvent) => {
+    e.preventDefault()
+    contextMenu.open(e.clientX, e.clientY, null)
+  }
+
+  const desktopMenuItems = [
+    {
+      label: 'Neuer Link',
+      icon: <PlusIcon />,
+      onClick: () => console.log('Neuer Link'), // Task 3.6
+    },
+    {
+      label: 'Neuer Ordner',
+      icon: <FolderPlusIcon />,
+      onClick: () => console.log('Neuer Ordner'), // Task 3.7
+    },
+  ]
+
   return (
-    <div className="relative w-screen h-screen overflow-hidden select-none">
+    <div
+      className="relative w-screen h-screen overflow-hidden select-none"
+      onContextMenu={handleContextMenu}
+    >
       <AnimatedBackground />
 
       {/* Desktop-Grid mit Abstand nach unten für die Taskbar */}
@@ -19,6 +45,14 @@ export default function DesktopCanvas() {
 
       {/* Taskbar */}
       <Taskbar onSettingsClick={handleSettingsClick} />
+
+      <ContextMenu
+        isOpen={contextMenu.isOpen}
+        x={contextMenu.x}
+        y={contextMenu.y}
+        items={desktopMenuItems}
+        onClose={contextMenu.close}
+      />
     </div>
   )
 }

@@ -37,7 +37,7 @@
 |---|---|---|---|---|
 | 2.1 | `DesktopCanvas` Komponente | Vollbild-Container mit animiertem Hintergrund (Gradient/Wallpaper) | 🔴 Hoch | ✅ Erledigt |
 | 2.2 | `Taskbar` Komponente | Untere Leiste mit App-Name, Uhrzeit und Settings-Button | 🟡 Mittel | ✅ Erledigt |
-| 2.3 | `ContextMenu` Komponente | Rechtsklick-Kontextmenü (Neuer Ordner, Neuer Link, etc.) | 🔴 Hoch | ⬜ Offen |
+| 2.3 | `ContextMenu` Komponente | Rechtsklick-Kontextmenü (Neuer Ordner, Neuer Link, etc.) | 🔴 Hoch | ✅ Erledigt |
 | 2.4 | Animierter Hintergrund | Particle-Effekt oder subtile CSS-Gradient-Animation | 🟡 Mittel | ⬜ Offen |
 | 2.5 | Responsives Grid-Layout | CSS Grid für Icon-Placement auf dem Desktop | 🔴 Hoch | ⬜ Offen |
 | 2.6 | Globales Theme-System | CSS Custom Properties für Light/Dark Mode | 🟡 Mittel | ⬜ Offen |

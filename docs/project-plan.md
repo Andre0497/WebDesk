@@ -53,7 +53,7 @@
 
 | # | Task | Beschreibung | Priorität | Status |
 |---|---|---|---|---|
-| 3.1 | Datenmodell definieren | TypeScript-Interfaces für `LinkItem`, `FolderItem`, `DesktopItem` | 🔴 Hoch | ⬜ Offen |
+| 3.1 | Datenmodell definieren | TypeScript-Interfaces für `LinkItem`, `FolderItem`, `DesktopItem` | 🔴 Hoch | ✅ Erledigt |
 | 3.2 | `LinkIcon` Komponente | Icon mit Favicon-Fetch, Label, Hover-Effekt | 🔴 Hoch | ⬜ Offen |
 | 3.3 | `FolderIcon` Komponente | Ordner-Icon mit Anzahl-Badge und Hover-Effekt | 🔴 Hoch | ⬜ Offen |
 | 3.4 | `FolderWindow` Komponente | Öffenbares Fenster (wie Finder/Explorer) mit Inhalt des Ordners | 🔴 Hoch | ⬜ Offen |

@@ -52,11 +52,7 @@ export default function DesktopCanvas({ theme, onToggleTheme }: DesktopCanvasPro
       </div>
 
       {/* Taskbar */}
-      <Taskbar
-        onSettingsClick={handleSettingsClick}
-        theme={theme}
-        onToggleTheme={onToggleTheme}
-      />
+      <Taskbar onSettingsClick={handleSettingsClick} theme={theme} onToggleTheme={onToggleTheme} />
 
       <ContextMenu
         isOpen={contextMenu.isOpen}

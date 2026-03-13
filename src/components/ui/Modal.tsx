@@ -57,12 +57,7 @@ export default function Modal({
 
           {/* Zentrierter Container */}
           <div className="fixed inset-0 flex items-center justify-center p-4">
-            <motion.div
-              variants={panelVariants}
-              initial="hidden"
-              animate="visible"
-              exit="exit"
-            >
+            <motion.div variants={panelVariants} initial="hidden" animate="visible" exit="exit">
               <Dialog.Panel
                 className={`w-full ${sizeClasses[size]} bg-gray-800/95 backdrop-blur-md border border-white/10 rounded-2xl shadow-2xl text-white`}
               >

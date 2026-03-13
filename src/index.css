@@ -2,6 +2,31 @@
 
 @custom-variant dark (&:where(.dark, .dark *));
 
+@keyframes gradient-shift {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+.animated-gradient {
+  background: linear-gradient(135deg, #0f0c29, #302b63, #24243e, #1a1a2e, #16213e);
+  background-size: 400% 400%;
+  animation: gradient-shift 15s ease infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .animated-gradient {
+    animation: none;
+    background-position: 0% 50%;
+  }
+}
+
 * {
   box-sizing: border-box;
   margin: 0;

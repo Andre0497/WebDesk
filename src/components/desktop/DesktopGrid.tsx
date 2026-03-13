@@ -1,11 +1,23 @@
 import { useDesktopGrid } from '../../hooks/useDesktopGrid'
+import LinkIcon from '../icons/LinkIcon'
+import type { LinkItem } from '../../types'
+import { defaultItems } from '../../utils/defaultData'
 
-export default function DesktopGrid() {
+interface DesktopGridProps {
+  onIconContextMenu?: (e: React.MouseEvent, id: string) => void
+}
+
+export default function DesktopGrid({ onIconContextMenu }: DesktopGridProps) {
   const { cols, rows, cellSize } = useDesktopGrid(100)
+
+  // Temporäre Demo-Items (wird in Task 6.1 durch Store ersetzt)
+  const desktopLinks = defaultItems.filter(
+    item => item.type === 'link' && item.parentId === null,
+  ) as LinkItem[]
 
   return (
     <div
-      className="w-full h-full"
+      className="relative w-full h-full"
       style={{
         display: 'grid',
         gridTemplateColumns: `repeat(${cols}, ${cellSize}px)`,
@@ -32,6 +44,17 @@ export default function DesktopGrid() {
           }}
         />
       )}
+
+      {/* Icons über dem Grid */}
+      {desktopLinks.map(item => (
+        <div
+          key={item.id}
+          style={{ gridColumn: item.position.col + 1, gridRow: item.position.row + 1 }}
+          className="flex items-center justify-center z-10"
+        >
+          <LinkIcon item={item} onContextMenu={onIconContextMenu} />
+        </div>
+      ))}
     </div>
   )
 }

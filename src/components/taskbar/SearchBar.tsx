@@ -1,5 +1,8 @@
-// TODO: Implementierung in Task 3.10
 export default function SearchBar() {
-  return null
+  return (
+    <div className="hidden">
+      {/* Wird in Task 3.10 implementiert */}
+    </div>
+  )
 }
 

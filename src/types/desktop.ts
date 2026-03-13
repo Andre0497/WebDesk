@@ -25,4 +25,3 @@ export interface FolderItem extends BaseItem {
 }
 
 export type DesktopItem = LinkItem | FolderItem
-

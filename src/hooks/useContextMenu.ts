@@ -40,4 +40,3 @@ export function useContextMenu() {
 
   return { ...state, open, close }
 }
-

@@ -2,4 +2,3 @@
 export default function LinkIcon() {
   return null
 }
-

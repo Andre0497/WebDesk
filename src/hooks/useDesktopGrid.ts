@@ -15,7 +15,7 @@ export function useDesktopGrid(cellSize: number = 100): GridDimensions {
       rows: Math.floor((window.innerHeight - TASKBAR_HEIGHT) / cellSize),
       cellSize,
     }),
-    [cellSize],
+    [cellSize]
   )
 
   const [dimensions, setDimensions] = useState<GridDimensions>(calculate)
@@ -28,4 +28,3 @@ export function useDesktopGrid(cellSize: number = 100): GridDimensions {
 
   return dimensions
 }
-

@@ -68,4 +68,3 @@ export default function ContextMenu({ isOpen, x, y, items, onClose }: ContextMen
     document.body
   )
 }
-

@@ -51,4 +51,3 @@ function GridCell({ col, row }: GridCellProps) {
     />
   )
 }
-

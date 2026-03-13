@@ -1,4 +1,10 @@
-import { PlusIcon, FolderPlusIcon, PencilIcon, TrashIcon } from '@heroicons/react/24/outline'
+import {
+  PlusIcon,
+  FolderPlusIcon,
+  FolderOpenIcon,
+  PencilIcon,
+  TrashIcon,
+} from '@heroicons/react/24/outline'
 import AnimatedBackground from './AnimatedBackground'
 import DesktopGrid from './DesktopGrid'
 import Taskbar from '../taskbar/Taskbar'
@@ -13,6 +19,7 @@ interface DesktopCanvasProps {
 export default function DesktopCanvas({ theme, onToggleTheme }: DesktopCanvasProps) {
   const contextMenu = useContextMenu()
   const iconContextMenu = useContextMenu()
+  const folderContextMenu = useContextMenu()
 
   // Später kommt dieser Wert aus dem desktopStore (Task 6.1)
   const wallpaper = undefined // undefined = animierter Gradient
@@ -29,6 +36,14 @@ export default function DesktopCanvas({ theme, onToggleTheme }: DesktopCanvasPro
 
   const handleIconContextMenu = (e: React.MouseEvent, id: string) => {
     iconContextMenu.open(e.clientX, e.clientY, id)
+  }
+
+  const handleFolderContextMenu = (e: React.MouseEvent, id: string) => {
+    folderContextMenu.open(e.clientX, e.clientY, id)
+  }
+
+  const handleFolderDoubleClick = (id: string) => {
+    console.log('Ordner öffnen:', id) // Task 3.4
   }
 
   const desktopMenuItems = [
@@ -58,6 +73,26 @@ export default function DesktopCanvas({ theme, onToggleTheme }: DesktopCanvasPro
     },
   ]
 
+  const getFolderMenuItems = (folderId: string) => [
+    {
+      label: 'Öffnen',
+      icon: <FolderOpenIcon />,
+      onClick: () => console.log('Öffnen/Schließen:', folderId), // Task 3.4
+    },
+    {
+      label: 'Bearbeiten',
+      icon: <PencilIcon />,
+      onClick: () => console.log('Bearbeiten:', folderId), // Task 3.8
+    },
+    {
+      divider: true,
+      label: 'Löschen',
+      icon: <TrashIcon />,
+      danger: true,
+      onClick: () => console.log('Löschen:', folderId), // Task 3.9
+    },
+  ]
+
   return (
     <div
       className="relative w-screen h-screen overflow-hidden select-none"
@@ -67,7 +102,11 @@ export default function DesktopCanvas({ theme, onToggleTheme }: DesktopCanvasPro
 
       {/* Desktop-Grid mit Abstand nach unten für die Taskbar */}
       <div className="relative z-10 w-full h-full pb-12">
-        <DesktopGrid onIconContextMenu={handleIconContextMenu} />
+        <DesktopGrid
+          onIconContextMenu={handleIconContextMenu}
+          onFolderContextMenu={handleFolderContextMenu}
+          onFolderDoubleClick={handleFolderDoubleClick}
+        />
       </div>
 
       {/* Taskbar */}
@@ -87,6 +126,14 @@ export default function DesktopCanvas({ theme, onToggleTheme }: DesktopCanvasPro
         y={iconContextMenu.y}
         items={iconContextMenu.targetId ? getIconMenuItems(iconContextMenu.targetId) : []}
         onClose={iconContextMenu.close}
+      />
+
+      <ContextMenu
+        isOpen={folderContextMenu.isOpen}
+        x={folderContextMenu.x}
+        y={folderContextMenu.y}
+        items={folderContextMenu.targetId ? getFolderMenuItems(folderContextMenu.targetId) : []}
+        onClose={folderContextMenu.close}
       />
     </div>
   )

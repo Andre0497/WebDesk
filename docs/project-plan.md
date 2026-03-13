@@ -55,7 +55,7 @@
 |---|---|---|---|---|
 | 3.1 | Datenmodell definieren | TypeScript-Interfaces für `LinkItem`, `FolderItem`, `DesktopItem` | 🔴 Hoch | ✅ Erledigt |
 | 3.2 | `LinkIcon` Komponente | Icon mit Favicon-Fetch, Label, Hover-Effekt | 🔴 Hoch | ✅ Erledigt |
-| 3.3 | `FolderIcon` Komponente | Ordner-Icon mit Anzahl-Badge und Hover-Effekt | 🔴 Hoch | ⬜ Offen |
+| 3.3 | `FolderIcon` Komponente | Ordner-Icon mit Anzahl-Badge und Hover-Effekt | 🔴 Hoch | ✅ Erledigt |
 | 3.4 | `FolderWindow` Komponente | Öffenbares Fenster (wie Finder/Explorer) mit Inhalt des Ordners | 🔴 Hoch | ⬜ Offen |
 | 3.5 | Favicon-Fetching Service | `https://www.google.com/s2/favicons?sz=64&domain=...` nutzen | 🟡 Mittel | ⬜ Offen |
 | 3.6 | `AddLinkModal` Komponente | Formular: URL, Name, Ziel-Ordner, Icon-Vorschau | 🔴 Hoch | ⬜ Offen |

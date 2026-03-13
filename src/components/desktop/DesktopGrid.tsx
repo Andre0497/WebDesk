@@ -1,19 +1,33 @@
 import { useDesktopGrid } from '../../hooks/useDesktopGrid'
 import LinkIcon from '../icons/LinkIcon'
-import type { LinkItem } from '../../types'
+import FolderIcon from '../icons/FolderIcon'
+import type { LinkItem, FolderItem } from '../../types'
 import { defaultItems } from '../../utils/defaultData'
 
 interface DesktopGridProps {
   onIconContextMenu?: (e: React.MouseEvent, id: string) => void
+  onFolderContextMenu?: (e: React.MouseEvent, id: string) => void
+  onFolderDoubleClick?: (id: string) => void
 }
 
-export default function DesktopGrid({ onIconContextMenu }: DesktopGridProps) {
+export default function DesktopGrid({
+  onIconContextMenu,
+  onFolderContextMenu,
+  onFolderDoubleClick,
+}: DesktopGridProps) {
   const { cols, rows, cellSize } = useDesktopGrid(100)
 
   // Temporäre Demo-Items (wird in Task 6.1 durch Store ersetzt)
   const desktopLinks = defaultItems.filter(
     item => item.type === 'link' && item.parentId === null,
   ) as LinkItem[]
+
+  const desktopFolders = defaultItems.filter(
+    item => item.type === 'folder' && item.parentId === null,
+  ) as FolderItem[]
+
+  const getItemCount = (folderId: string) =>
+    defaultItems.filter(item => item.parentId === folderId).length
 
   return (
     <div
@@ -53,6 +67,22 @@ export default function DesktopGrid({ onIconContextMenu }: DesktopGridProps) {
           className="flex items-center justify-center z-10"
         >
           <LinkIcon item={item} onContextMenu={onIconContextMenu} />
+        </div>
+      ))}
+
+      {/* Ordner-Icons über dem Grid */}
+      {desktopFolders.map(folder => (
+        <div
+          key={folder.id}
+          style={{ gridColumn: folder.position.col + 1, gridRow: folder.position.row + 1 }}
+          className="flex items-center justify-center z-10"
+        >
+          <FolderIcon
+            item={folder}
+            itemCount={getItemCount(folder.id)}
+            onDoubleClick={onFolderDoubleClick}
+            onContextMenu={onFolderContextMenu}
+          />
         </div>
       ))}
     </div>

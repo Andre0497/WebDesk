@@ -39,7 +39,7 @@
 | 2.2 | `Taskbar` Komponente | Untere Leiste mit App-Name, Uhrzeit und Settings-Button | 🟡 Mittel | ✅ Erledigt |
 | 2.3 | `ContextMenu` Komponente | Rechtsklick-Kontextmenü (Neuer Ordner, Neuer Link, etc.) | 🔴 Hoch | ✅ Erledigt |
 | 2.4 | Animierter Hintergrund | Particle-Effekt oder subtile CSS-Gradient-Animation | 🟡 Mittel | ✅ Erledigt |
-| 2.5 | Responsives Grid-Layout | CSS Grid für Icon-Placement auf dem Desktop | 🔴 Hoch | ⬜ Offen |
+| 2.5 | Responsives Grid-Layout | CSS Grid für Icon-Placement auf dem Desktop | 🔴 Hoch | ✅ Erledigt |
 | 2.6 | Globales Theme-System | CSS Custom Properties für Light/Dark Mode | 🟡 Mittel | ⬜ Offen |
 | 2.7 | `Modal` Basiskomponente | Wiederverwendbares Modal mit Framer Motion Ein-/Ausblenden | 🔴 Hoch | ⬜ Offen |
 

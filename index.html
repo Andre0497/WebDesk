@@ -5,6 +5,17 @@
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>WebDesk</title>
+    <script>
+      ;(function () {
+        try {
+          var data = JSON.parse(localStorage.getItem('webdesk-data') || '{}')
+          var theme = (data && data.settings && data.settings.theme) || 'dark'
+          if (theme === 'dark') document.documentElement.classList.add('dark')
+        } catch (e) {
+          document.documentElement.classList.add('dark')
+        }
+      })()
+    </script>
   </head>
   <body>
     <div id="root"></div>

@@ -5,7 +5,12 @@ import Taskbar from '../taskbar/Taskbar'
 import { useContextMenu } from '../../hooks/useContextMenu'
 import ContextMenu from '../ui/ContextMenu'
 
-export default function DesktopCanvas() {
+interface DesktopCanvasProps {
+  theme: 'dark' | 'light'
+  onToggleTheme: () => void
+}
+
+export default function DesktopCanvas({ theme, onToggleTheme }: DesktopCanvasProps) {
   const contextMenu = useContextMenu()
 
   // Später kommt dieser Wert aus dem desktopStore (Task 6.1)
@@ -47,7 +52,11 @@ export default function DesktopCanvas() {
       </div>
 
       {/* Taskbar */}
-      <Taskbar onSettingsClick={handleSettingsClick} />
+      <Taskbar
+        onSettingsClick={handleSettingsClick}
+        theme={theme}
+        onToggleTheme={onToggleTheme}
+      />
 
       <ContextMenu
         isOpen={contextMenu.isOpen}
@@ -59,4 +68,3 @@ export default function DesktopCanvas() {
     </div>
   )
 }
-

@@ -2,6 +2,32 @@
 
 @custom-variant dark (&:where(.dark, .dark *));
 
+/* === Light Mode (Standard) === */
+:root {
+  --color-bg-primary: #f0f4f8;
+  --color-bg-secondary: #ffffff;
+  --color-bg-overlay: rgba(255, 255, 255, 0.8);
+  --color-border: rgba(0, 0, 0, 0.1);
+  --color-text-primary: #1a202c;
+  --color-text-secondary: #4a5568;
+  --color-accent: #6366f1;
+  --color-glass: rgba(255, 255, 255, 0.15);
+  --color-glass-border: rgba(255, 255, 255, 0.3);
+}
+
+/* === Dark Mode === */
+.dark {
+  --color-bg-primary: #1a1a2e;
+  --color-bg-secondary: #16213e;
+  --color-bg-overlay: rgba(0, 0, 0, 0.5);
+  --color-border: rgba(255, 255, 255, 0.1);
+  --color-text-primary: rgba(255, 255, 255, 0.87);
+  --color-text-secondary: rgba(255, 255, 255, 0.5);
+  --color-accent: #818cf8;
+  --color-glass: rgba(255, 255, 255, 0.08);
+  --color-glass-border: rgba(255, 255, 255, 0.15);
+}
+
 @keyframes gradient-shift {
   0% {
     background-position: 0% 50%;

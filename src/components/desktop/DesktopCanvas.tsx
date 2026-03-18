@@ -12,9 +12,10 @@ import Taskbar from '../taskbar/Taskbar'
 import FolderWindow from '../windows/FolderWindow'
 import { useContextMenu } from '../../hooks/useContextMenu'
 import ContextMenu from '../ui/ContextMenu'
+import AddLinkModal from '../modals/AddLinkModal'
 import { defaultItems } from '../../utils/defaultData'
 import { isFolderItem } from '../../types'
-import type { FolderItem } from '../../types'
+import type { FolderItem, LinkItem } from '../../types'
 
 interface DesktopCanvasProps {
   theme: 'dark' | 'light'
@@ -27,6 +28,7 @@ export default function DesktopCanvas({ theme, onToggleTheme }: DesktopCanvasPro
   const folderContextMenu = useContextMenu()
 
   const [openFolderIds, setOpenFolderIds] = useState<string[]>([])
+  const [isAddLinkOpen, setIsAddLinkOpen] = useState(false)
 
   // Später kommt dieser Wert aus dem desktopStore (Task 6.1)
   const wallpaper = undefined // undefined = animierter Gradient
@@ -65,7 +67,7 @@ export default function DesktopCanvas({ theme, onToggleTheme }: DesktopCanvasPro
     {
       label: 'Neuer Link',
       icon: <PlusIcon />,
-      onClick: () => console.log('Neuer Link'), // Task 3.6
+      onClick: () => setIsAddLinkOpen(true),
     },
     {
       label: 'Neuer Ordner',
@@ -159,6 +161,14 @@ export default function DesktopCanvas({ theme, onToggleTheme }: DesktopCanvasPro
         y={folderContextMenu.y}
         items={folderContextMenu.targetId ? getFolderMenuItems(folderContextMenu.targetId) : []}
         onClose={folderContextMenu.close}
+      />
+
+      <AddLinkModal
+        isOpen={isAddLinkOpen}
+        onClose={() => setIsAddLinkOpen(false)}
+        onAdd={(link: Omit<LinkItem, 'id' | 'createdAt' | 'updatedAt'>) =>
+          console.log('Link hinzufügen:', link)
+        }
       />
     </div>
   )

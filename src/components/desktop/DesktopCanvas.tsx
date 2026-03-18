@@ -1,3 +1,4 @@
+import { useState } from 'react'
 import {
   PlusIcon,
   FolderPlusIcon,
@@ -8,8 +9,12 @@ import {
 import AnimatedBackground from './AnimatedBackground'
 import DesktopGrid from './DesktopGrid'
 import Taskbar from '../taskbar/Taskbar'
+import FolderWindow from '../windows/FolderWindow'
 import { useContextMenu } from '../../hooks/useContextMenu'
 import ContextMenu from '../ui/ContextMenu'
+import { defaultItems } from '../../utils/defaultData'
+import { isFolderItem } from '../../types'
+import type { FolderItem } from '../../types'
 
 interface DesktopCanvasProps {
   theme: 'dark' | 'light'
@@ -20,6 +25,8 @@ export default function DesktopCanvas({ theme, onToggleTheme }: DesktopCanvasPro
   const contextMenu = useContextMenu()
   const iconContextMenu = useContextMenu()
   const folderContextMenu = useContextMenu()
+
+  const [openFolderIds, setOpenFolderIds] = useState<string[]>([])
 
   // Später kommt dieser Wert aus dem desktopStore (Task 6.1)
   const wallpaper = undefined // undefined = animierter Gradient
@@ -43,8 +50,16 @@ export default function DesktopCanvas({ theme, onToggleTheme }: DesktopCanvasPro
   }
 
   const handleFolderDoubleClick = (id: string) => {
-    console.log('Ordner öffnen:', id) // Task 3.4
+    setOpenFolderIds(prev => (prev.includes(id) ? prev : [...prev, id]))
   }
+
+  const handleFolderClose = (id: string) => {
+    setOpenFolderIds(prev => prev.filter(fid => fid !== id))
+  }
+
+  const openFolders = defaultItems.filter(
+    item => isFolderItem(item) && openFolderIds.includes(item.id),
+  ) as FolderItem[]
 
   const desktopMenuItems = [
     {
@@ -77,7 +92,7 @@ export default function DesktopCanvas({ theme, onToggleTheme }: DesktopCanvasPro
     {
       label: 'Öffnen',
       icon: <FolderOpenIcon />,
-      onClick: () => console.log('Öffnen/Schließen:', folderId), // Task 3.4
+      onClick: () => handleFolderDoubleClick(folderId),
     },
     {
       label: 'Bearbeiten',
@@ -108,6 +123,16 @@ export default function DesktopCanvas({ theme, onToggleTheme }: DesktopCanvasPro
           onFolderDoubleClick={handleFolderDoubleClick}
         />
       </div>
+
+      {/* Offene Ordner-Fenster */}
+      {openFolders.map(folder => (
+        <FolderWindow
+          key={folder.id}
+          folder={folder}
+          items={defaultItems.filter(item => item.parentId === folder.id)}
+          onClose={() => handleFolderClose(folder.id)}
+        />
+      ))}
 
       {/* Taskbar */}
       <Taskbar onSettingsClick={handleSettingsClick} theme={theme} onToggleTheme={onToggleTheme} />

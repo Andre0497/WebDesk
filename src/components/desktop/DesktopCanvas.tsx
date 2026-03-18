@@ -13,6 +13,7 @@ import FolderWindow from '../windows/FolderWindow'
 import { useContextMenu } from '../../hooks/useContextMenu'
 import ContextMenu from '../ui/ContextMenu'
 import AddLinkModal from '../modals/AddLinkModal'
+import AddFolderModal from '../modals/AddFolderModal'
 import { defaultItems } from '../../utils/defaultData'
 import { isFolderItem } from '../../types'
 import type { FolderItem, LinkItem } from '../../types'
@@ -29,6 +30,7 @@ export default function DesktopCanvas({ theme, onToggleTheme }: DesktopCanvasPro
 
   const [openFolderIds, setOpenFolderIds] = useState<string[]>([])
   const [isAddLinkOpen, setIsAddLinkOpen] = useState(false)
+  const [isAddFolderOpen, setIsAddFolderOpen] = useState(false)
 
   // Später kommt dieser Wert aus dem desktopStore (Task 6.1)
   const wallpaper = undefined // undefined = animierter Gradient
@@ -72,7 +74,7 @@ export default function DesktopCanvas({ theme, onToggleTheme }: DesktopCanvasPro
     {
       label: 'Neuer Ordner',
       icon: <FolderPlusIcon />,
-      onClick: () => console.log('Neuer Ordner'), // Task 3.7
+      onClick: () => setIsAddFolderOpen(true),
     },
   ]
 
@@ -169,6 +171,12 @@ export default function DesktopCanvas({ theme, onToggleTheme }: DesktopCanvasPro
         onAdd={(link: Omit<LinkItem, 'id' | 'createdAt' | 'updatedAt'>) =>
           console.log('Link hinzufügen:', link)
         }
+      />
+
+      <AddFolderModal
+        isOpen={isAddFolderOpen}
+        onClose={() => setIsAddFolderOpen(false)}
+        onAdd={folder => console.log('Ordner hinzufügen:', folder)}
       />
     </div>
   )

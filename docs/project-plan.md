@@ -60,7 +60,7 @@
 | 3.5 | Favicon-Fetching Service | `https://www.google.com/s2/favicons?sz=64&domain=...` nutzen | 🟡 Mittel | ✅ Erledigt |
 | 3.6 | `AddLinkModal` Komponente | Formular: URL, Name, Ziel-Ordner, Icon-Vorschau | 🔴 Hoch | ✅ Erledigt |
 | 3.7 | `AddFolderModal` Komponente | Formular: Name, Farbe, Icon-Emoji | 🔴 Hoch | ⬜ Offen |
-| 3.8 | `EditItemModal` Komponente | Bearbeiten von Name/URL/Farbe bestehender Items | 🟡 Mittel | ⬜ Offen |
+| 3.8 | `EditItemModal` Komponente | Bearbeiten von Name/URL/Farbe bestehender Items | 🟡 Mittel | ✅ Erledigt |
 | 3.9 | Löschen mit Bestätigung | Bestätigungs-Dialog vor dem Löschen | 🟡 Mittel | ⬜ Offen |
 | 3.10 | Suche / Schnellzugriff | Suchleiste die Icons/Links filtert (Spotlight-Stil) | 🟢 Niedrig | ⬜ Offen |
 

@@ -14,9 +14,10 @@ import { useContextMenu } from '../../hooks/useContextMenu'
 import ContextMenu from '../ui/ContextMenu'
 import AddLinkModal from '../modals/AddLinkModal'
 import AddFolderModal from '../modals/AddFolderModal'
+import EditItemModal from '../modals/EditItemModal'
 import { defaultItems } from '../../utils/defaultData'
 import { isFolderItem } from '../../types'
-import type { FolderItem, LinkItem } from '../../types'
+import type { DesktopItem, FolderItem, LinkItem } from '../../types'
 
 interface DesktopCanvasProps {
   theme: 'dark' | 'light'
@@ -31,6 +32,7 @@ export default function DesktopCanvas({ theme, onToggleTheme }: DesktopCanvasPro
   const [openFolderIds, setOpenFolderIds] = useState<string[]>([])
   const [isAddLinkOpen, setIsAddLinkOpen] = useState(false)
   const [isAddFolderOpen, setIsAddFolderOpen] = useState(false)
+  const [editingItem, setEditingItem] = useState<DesktopItem | null>(null)
 
   // Später kommt dieser Wert aus dem desktopStore (Task 6.1)
   const wallpaper = undefined // undefined = animierter Gradient
@@ -82,7 +84,7 @@ export default function DesktopCanvas({ theme, onToggleTheme }: DesktopCanvasPro
     {
       label: 'Bearbeiten',
       icon: <PencilIcon />,
-      onClick: () => console.log('Bearbeiten:', itemId), // Task 3.8
+      onClick: () => setEditingItem(defaultItems.find(i => i.id === itemId) ?? null),
     },
     {
       label: 'Löschen',
@@ -101,7 +103,7 @@ export default function DesktopCanvas({ theme, onToggleTheme }: DesktopCanvasPro
     {
       label: 'Bearbeiten',
       icon: <PencilIcon />,
-      onClick: () => console.log('Bearbeiten:', folderId), // Task 3.8
+      onClick: () => setEditingItem(defaultItems.find(i => i.id === folderId) ?? null),
     },
     {
       divider: true,
@@ -177,6 +179,13 @@ export default function DesktopCanvas({ theme, onToggleTheme }: DesktopCanvasPro
         isOpen={isAddFolderOpen}
         onClose={() => setIsAddFolderOpen(false)}
         onAdd={folder => console.log('Ordner hinzufügen:', folder)}
+      />
+
+      <EditItemModal
+        isOpen={editingItem !== null}
+        onClose={() => setEditingItem(null)}
+        item={editingItem}
+        onSave={(id, updates) => console.log('Update:', id, updates)}
       />
     </div>
   )

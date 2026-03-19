@@ -4,11 +4,17 @@ import SearchBar from './SearchBar'
 
 interface TaskbarProps {
   onSettingsClick: () => void
+  onSearchClick: () => void
   theme: 'dark' | 'light'
   onToggleTheme: () => void
 }
 
-export default function Taskbar({ onSettingsClick, theme, onToggleTheme }: TaskbarProps) {
+export default function Taskbar({
+  onSettingsClick,
+  onSearchClick,
+  theme,
+  onToggleTheme,
+}: TaskbarProps) {
   return (
     <div
       className="absolute bottom-0 left-0 right-0 z-50 h-12 px-4
@@ -19,8 +25,8 @@ export default function Taskbar({ onSettingsClick, theme, onToggleTheme }: Taskb
       {/* Linke Seite: App-Name */}
       <span className="font-bold text-sm tracking-widest uppercase select-none">WebDesk</span>
 
-      {/* Mitte: Suchleiste (Platzhalter) */}
-      <SearchBar />
+      {/* Mitte: Suchleiste */}
+      <SearchBar onOpen={onSearchClick} />
 
       {/* Rechte Seite: Theme-Toggle + Settings + Uhr */}
       <div className="flex items-center gap-4">

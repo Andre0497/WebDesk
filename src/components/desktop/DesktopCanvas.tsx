@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import {
   PlusIcon,
   FolderPlusIcon,
@@ -15,6 +15,7 @@ import ContextMenu from '../ui/ContextMenu'
 import AddLinkModal from '../modals/AddLinkModal'
 import AddFolderModal from '../modals/AddFolderModal'
 import EditItemModal from '../modals/EditItemModal'
+import SpotlightSearch from '../ui/SpotlightSearch'
 import { defaultItems } from '../../utils/defaultData'
 import { isFolderItem } from '../../types'
 import type { DesktopItem, FolderItem, LinkItem } from '../../types'
@@ -33,6 +34,18 @@ export default function DesktopCanvas({ theme, onToggleTheme }: DesktopCanvasPro
   const [isAddLinkOpen, setIsAddLinkOpen] = useState(false)
   const [isAddFolderOpen, setIsAddFolderOpen] = useState(false)
   const [editingItem, setEditingItem] = useState<DesktopItem | null>(null)
+  const [isSearchOpen, setIsSearchOpen] = useState(false)
+
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if ((e.ctrlKey || e.metaKey) && e.key === 'k') {
+        e.preventDefault()
+        setIsSearchOpen(prev => !prev)
+      }
+    }
+    window.addEventListener('keydown', handleKeyDown)
+    return () => window.removeEventListener('keydown', handleKeyDown)
+  }, [])
 
   // Später kommt dieser Wert aus dem desktopStore (Task 6.1)
   const wallpaper = undefined // undefined = animierter Gradient
@@ -141,7 +154,12 @@ export default function DesktopCanvas({ theme, onToggleTheme }: DesktopCanvasPro
       ))}
 
       {/* Taskbar */}
-      <Taskbar onSettingsClick={handleSettingsClick} theme={theme} onToggleTheme={onToggleTheme} />
+      <Taskbar
+        onSettingsClick={handleSettingsClick}
+        onSearchClick={() => setIsSearchOpen(true)}
+        theme={theme}
+        onToggleTheme={onToggleTheme}
+      />
 
       <ContextMenu
         isOpen={contextMenu.isOpen}
@@ -186,6 +204,13 @@ export default function DesktopCanvas({ theme, onToggleTheme }: DesktopCanvasPro
         onClose={() => setEditingItem(null)}
         item={editingItem}
         onSave={(id, updates) => console.log('Update:', id, updates)}
+      />
+
+      <SpotlightSearch
+        isOpen={isSearchOpen}
+        onClose={() => setIsSearchOpen(false)}
+        items={defaultItems}
+        onOpenFolder={id => handleFolderDoubleClick(id)}
       />
     </div>
   )

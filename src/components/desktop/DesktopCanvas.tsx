@@ -239,6 +239,7 @@ export default function DesktopCanvas({ theme, onToggleTheme }: DesktopCanvasPro
         onClose={() => setIsSearchOpen(false)}
         items={defaultItems}
         onOpenFolder={id => handleFolderDoubleClick(id)}
+      />
       <ConfirmModal
         isOpen={confirmState?.isOpen ?? false}
         onClose={() => setConfirmState(null)}

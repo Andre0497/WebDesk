@@ -15,6 +15,7 @@ import ContextMenu from '../ui/ContextMenu'
 import AddLinkModal from '../modals/AddLinkModal'
 import AddFolderModal from '../modals/AddFolderModal'
 import EditItemModal from '../modals/EditItemModal'
+import ConfirmModal from '../modals/ConfirmModal'
 import { defaultItems } from '../../utils/defaultData'
 import { isFolderItem } from '../../types'
 import type { DesktopItem, FolderItem, LinkItem } from '../../types'
@@ -33,6 +34,15 @@ export default function DesktopCanvas({ theme, onToggleTheme }: DesktopCanvasPro
   const [isAddLinkOpen, setIsAddLinkOpen] = useState(false)
   const [isAddFolderOpen, setIsAddFolderOpen] = useState(false)
   const [editingItem, setEditingItem] = useState<DesktopItem | null>(null)
+  const [confirmState, setConfirmState] = useState<{
+    isOpen: boolean
+    itemId: string | null
+    itemName: string
+    isFolder: boolean
+  } | null>(null)
+
+  const getChildCount = (folderId: string) =>
+    defaultItems.filter(item => item.parentId === folderId).length
 
   // Später kommt dieser Wert aus dem desktopStore (Task 6.1)
   const wallpaper = undefined // undefined = animierter Gradient
@@ -90,7 +100,16 @@ export default function DesktopCanvas({ theme, onToggleTheme }: DesktopCanvasPro
       label: 'Löschen',
       icon: <TrashIcon />,
       danger: true,
-      onClick: () => console.log('Löschen:', itemId), // Task 3.9
+      onClick: () => {
+        const item = defaultItems.find(i => i.id === itemId)
+        if (!item) return
+        setConfirmState({
+          isOpen: true,
+          itemId: item.id,
+          itemName: item.name,
+          isFolder: item.type === 'folder',
+        })
+      },
     },
   ]
 
@@ -110,7 +129,16 @@ export default function DesktopCanvas({ theme, onToggleTheme }: DesktopCanvasPro
       label: 'Löschen',
       icon: <TrashIcon />,
       danger: true,
-      onClick: () => console.log('Löschen:', folderId), // Task 3.9
+      onClick: () => {
+        const item = defaultItems.find(i => i.id === folderId)
+        if (!item) return
+        setConfirmState({
+          isOpen: true,
+          itemId: item.id,
+          itemName: item.name,
+          isFolder: item.type === 'folder',
+        })
+      },
     },
   ]
 
@@ -186,6 +214,24 @@ export default function DesktopCanvas({ theme, onToggleTheme }: DesktopCanvasPro
         onClose={() => setEditingItem(null)}
         item={editingItem}
         onSave={(id, updates) => console.log('Update:', id, updates)}
+      />
+
+      <ConfirmModal
+        isOpen={confirmState?.isOpen ?? false}
+        onClose={() => setConfirmState(null)}
+        onConfirm={() => {
+          if (confirmState?.itemId) {
+            console.log('Löschen:', confirmState.itemId) // Task 6.1
+          }
+        }}
+        title={`„${confirmState?.itemName}" löschen?`}
+        message={
+          confirmState?.isFolder
+            ? `Der Ordner „${confirmState.itemName}" und alle ${getChildCount(confirmState.itemId ?? '')} enthaltenen Elemente werden unwiderruflich gelöscht.`
+            : `Der Link „${confirmState?.itemName}" wird unwiderruflich gelöscht.`
+        }
+        confirmLabel="Löschen"
+        isDangerous={true}
       />
     </div>
   )

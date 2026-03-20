@@ -75,7 +75,7 @@
 | # | Task | Beschreibung | Priorität | Status |
 |---|---|---|---|---|
 | 4.1 | `DndContext` auf Desktop einrichten | `@dnd-kit/core` Provider auf `DesktopCanvas` | 🔴 Hoch | ✅ Erledigt |
-| 4.2 | Draggable Icons | `useDraggable` Hook auf `LinkIcon` & `FolderIcon` | 🔴 Hoch | ⬜ Offen |
+| 4.2 | Draggable Icons | `useDraggable` Hook auf `LinkIcon` & `FolderIcon` | 🔴 Hoch | ✅ Erledigt |
 | 4.3 | Droppable Desktop-Grid-Zellen | Freie Positionen als Drop-Targets | 🔴 Hoch | ⬜ Offen |
 | 4.4 | Drop in Ordner | Ordner-Icon als Drop-Target → Item wird in Ordner verschoben | 🔴 Hoch | ⬜ Offen |
 | 4.5 | Drag-Overlay / Ghost-Preview | Schöne Semi-transparente Vorschau beim Ziehen | 🟡 Mittel | ⬜ Offen |

@@ -1,5 +1,14 @@
 import { useState, useEffect } from 'react'
 import {
+  DndContext,
+  PointerSensor,
+  TouchSensor,
+  rectIntersection,
+  useSensor,
+  useSensors,
+} from '@dnd-kit/core'
+import type { DragStartEvent, DragOverEvent, DragEndEvent } from '@dnd-kit/core'
+import {
   PlusIcon,
   FolderPlusIcon,
   FolderOpenIcon,
@@ -27,6 +36,25 @@ interface DesktopCanvasProps {
 }
 
 export default function DesktopCanvas({ theme, onToggleTheme }: DesktopCanvasProps) {
+  const sensors = useSensors(
+    useSensor(PointerSensor, { activationConstraint: { distance: 8 } }),
+    useSensor(TouchSensor, { activationConstraint: { delay: 250, tolerance: 5 } }),
+  )
+
+  function handleDragStart(event: DragStartEvent) {
+    console.log('dragStart', event.active.id)
+    // UIStore: setDraggingItem(event.active.id)
+  }
+
+  function handleDragOver(event: DragOverEvent) {
+    console.log('dragOver', event.over?.id)
+  }
+
+  function handleDragEnd(event: DragEndEvent) {
+    console.log('dragEnd', event.active.id, '→', event.over?.id)
+    // UIStore: setDraggingItem(null)
+  }
+
   const contextMenu = useContextMenu()
   const iconContextMenu = useContextMenu()
   const folderContextMenu = useContextMenu()
@@ -156,6 +184,13 @@ export default function DesktopCanvas({ theme, onToggleTheme }: DesktopCanvasPro
   ]
 
   return (
+    <DndContext
+      sensors={sensors}
+      collisionDetection={rectIntersection}
+      onDragStart={handleDragStart}
+      onDragOver={handleDragOver}
+      onDragEnd={handleDragEnd}
+    >
     <div
       className="relative w-screen h-screen overflow-hidden select-none"
       onContextMenu={handleContextMenu}
@@ -258,5 +293,6 @@ export default function DesktopCanvas({ theme, onToggleTheme }: DesktopCanvasPro
         isDangerous={true}
       />
     </div>
+    </DndContext>
   )
 }

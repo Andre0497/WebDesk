@@ -1,4 +1,7 @@
 import { useState } from 'react'
+import { useDraggable } from '@dnd-kit/core'
+import { CSS } from '@dnd-kit/utilities'
+import { motion } from 'framer-motion'
 import { GlobeAltIcon } from '@heroicons/react/24/outline'
 import type { LinkItem } from '../../types'
 import IconLabel from './IconLabel'
@@ -6,13 +9,25 @@ import IconLabel from './IconLabel'
 interface LinkIconProps {
   item: LinkItem
   onContextMenu?: (e: React.MouseEvent, id: string) => void
-  // wird in Task 4.2 um Drag-Props erweitert
 }
 
 export default function LinkIcon({ item, onContextMenu }: LinkIconProps) {
   const [faviconError, setFaviconError] = useState(false)
 
+  const { attributes, listeners, setNodeRef, transform, isDragging } = useDraggable({
+    id: item.id,
+    data: {
+      type: 'link',
+      item,
+    },
+  })
+
+  const style = {
+    transform: CSS.Translate.toString(transform),
+  }
+
   const handleDoubleClick = () => {
+    if (isDragging) return
     if (/^https?:\/\//i.test(item.url)) {
       window.open(item.url, '_blank', 'noopener,noreferrer')
     }
@@ -25,8 +40,14 @@ export default function LinkIcon({ item, onContextMenu }: LinkIconProps) {
   }
 
   return (
-    <div
-      className="flex flex-col items-center justify-start w-[88px] cursor-pointer
+    <motion.div
+      ref={setNodeRef}
+      style={style}
+      animate={{ opacity: isDragging ? 0.4 : 1, scale: isDragging ? 0.95 : 1 }}
+      transition={{ duration: 0.15 }}
+      {...listeners}
+      {...attributes}
+      className="flex flex-col items-center justify-start w-[88px] cursor-grab active:cursor-grabbing
                  group select-none"
       onDoubleClick={handleDoubleClick}
       onContextMenu={handleContextMenu}
@@ -54,6 +75,6 @@ export default function LinkIcon({ item, onContextMenu }: LinkIconProps) {
 
       {/* Label */}
       <IconLabel name={item.name} />
-    </div>
+    </motion.div>
   )
 }

@@ -1,3 +1,6 @@
+import { useDraggable } from '@dnd-kit/core'
+import { CSS } from '@dnd-kit/utilities'
+import { motion } from 'framer-motion'
 import { FolderIcon as HeroFolderIcon } from '@heroicons/react/24/solid'
 import type { FolderItem } from '../../types'
 import IconLabel from './IconLabel'
@@ -7,7 +10,6 @@ interface FolderIconProps {
   itemCount?: number
   onDoubleClick?: (id: string) => void
   onContextMenu?: (e: React.MouseEvent, id: string) => void
-  // wird in Task 4.2 um Drag-Props erweitert
 }
 
 export default function FolderIcon({
@@ -16,7 +18,20 @@ export default function FolderIcon({
   onDoubleClick,
   onContextMenu,
 }: FolderIconProps) {
+  const { attributes, listeners, setNodeRef, transform, isDragging } = useDraggable({
+    id: item.id,
+    data: {
+      type: 'folder',
+      item,
+    },
+  })
+
+  const style = {
+    transform: CSS.Translate.toString(transform),
+  }
+
   const handleDoubleClick = () => {
+    if (isDragging) return
     onDoubleClick?.(item.id)
   }
 
@@ -27,8 +42,14 @@ export default function FolderIcon({
   }
 
   return (
-    <div
-      className="flex flex-col items-center justify-start w-[88px] cursor-pointer group select-none"
+    <motion.div
+      ref={setNodeRef}
+      style={style}
+      animate={{ opacity: isDragging ? 0.4 : 1, scale: isDragging ? 0.95 : 1 }}
+      transition={{ duration: 0.15 }}
+      {...listeners}
+      {...attributes}
+      className="flex flex-col items-center justify-start w-[88px] cursor-grab active:cursor-grabbing group select-none"
       onDoubleClick={handleDoubleClick}
       onContextMenu={handleContextMenu}
       title={item.name}
@@ -73,6 +94,6 @@ export default function FolderIcon({
 
       {/* Label */}
       <IconLabel name={item.name} />
-    </div>
+    </motion.div>
   )
 }

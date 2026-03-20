@@ -1,33 +1,31 @@
 import { useDesktopGrid } from '../../hooks/useDesktopGrid'
 import LinkIcon from '../icons/LinkIcon'
 import FolderIcon from '../icons/FolderIcon'
-import type { LinkItem, FolderItem } from '../../types'
-import { defaultItems } from '../../utils/defaultData'
+import GridCell from './GridCell'
+import type { DesktopItem, LinkItem, FolderItem } from '../../types'
 
 interface DesktopGridProps {
+  items: DesktopItem[]
+  allItems: DesktopItem[]
   onIconContextMenu?: (e: React.MouseEvent, id: string) => void
   onFolderContextMenu?: (e: React.MouseEvent, id: string) => void
   onFolderDoubleClick?: (id: string) => void
 }
 
 export default function DesktopGrid({
+  items,
+  allItems,
   onIconContextMenu,
   onFolderContextMenu,
   onFolderDoubleClick,
 }: DesktopGridProps) {
   const { cols, rows, cellSize } = useDesktopGrid(100)
 
-  // Temporäre Demo-Items (wird in Task 6.1 durch Store ersetzt)
-  const desktopLinks = defaultItems.filter(
-    item => item.type === 'link' && item.parentId === null,
-  ) as LinkItem[]
-
-  const desktopFolders = defaultItems.filter(
-    item => item.type === 'folder' && item.parentId === null,
-  ) as FolderItem[]
+  // Items nach Grid-Position indexieren
+  const itemMap = new Map(items.map(i => [`${i.position.col}-${i.position.row}`, i]))
 
   const getItemCount = (folderId: string) =>
-    defaultItems.filter(item => item.parentId === folderId).length
+    allItems.filter(item => item.parentId === folderId).length
 
   return (
     <div
@@ -40,12 +38,27 @@ export default function DesktopGrid({
         gap: '4px',
       }}
     >
-      {/* Grid-Zellen als Drop-Targets (wird in Task 4.3 mit useDroppable ausgestattet) */}
-      {Array.from({ length: cols * rows }).map((_, index) => {
-        const col = index % cols
-        const row = Math.floor(index / cols)
-        return <GridCell key={`${col}-${row}`} col={col} row={row} />
-      })}
+      {Array.from({ length: rows }, (_, row) =>
+        Array.from({ length: cols }, (_, col) => {
+          const item = itemMap.get(`${col}-${row}`)
+          return (
+            <GridCell key={`${col}-${row}`} col={col} row={row}>
+              {item && (
+                item.type === 'link' ? (
+                  <LinkIcon item={item as LinkItem} onContextMenu={onIconContextMenu} />
+                ) : (
+                  <FolderIcon
+                    item={item as FolderItem}
+                    itemCount={getItemCount(item.id)}
+                    onDoubleClick={onFolderDoubleClick}
+                    onContextMenu={onFolderContextMenu}
+                  />
+                )
+              )}
+            </GridCell>
+          )
+        })
+      )}
       {import.meta.env.DEV && (
         <div
           className="absolute inset-0 pointer-events-none opacity-10"
@@ -58,49 +71,6 @@ export default function DesktopGrid({
           }}
         />
       )}
-
-      {/* Icons über dem Grid */}
-      {desktopLinks.map(item => (
-        <div
-          key={item.id}
-          style={{ gridColumn: item.position.col + 1, gridRow: item.position.row + 1 }}
-          className="flex items-center justify-center z-10"
-        >
-          <LinkIcon item={item} onContextMenu={onIconContextMenu} />
-        </div>
-      ))}
-
-      {/* Ordner-Icons über dem Grid */}
-      {desktopFolders.map(folder => (
-        <div
-          key={folder.id}
-          style={{ gridColumn: folder.position.col + 1, gridRow: folder.position.row + 1 }}
-          className="flex items-center justify-center z-10"
-        >
-          <FolderIcon
-            item={folder}
-            itemCount={getItemCount(folder.id)}
-            onDoubleClick={onFolderDoubleClick}
-            onContextMenu={onFolderContextMenu}
-          />
-        </div>
-      ))}
     </div>
-  )
-}
-
-interface GridCellProps {
-  col: number
-  row: number
-}
-
-function GridCell({ col, row }: GridCellProps) {
-  return (
-    <div
-      data-col={col}
-      data-row={row}
-      className="w-full h-full rounded-lg hover:bg-white/5 transition-colors duration-150"
-      // wird in Task 4.3 mit useDroppable erweitert
-    />
   )
 }

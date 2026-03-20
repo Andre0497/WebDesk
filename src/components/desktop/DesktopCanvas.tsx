@@ -7,7 +7,7 @@ import {
   useSensor,
   useSensors,
 } from '@dnd-kit/core'
-import type { DragStartEvent, DragOverEvent, DragEndEvent } from '@dnd-kit/core'
+import type { DragEndEvent, DragOverEvent, DragStartEvent } from '@dnd-kit/core'
 import {
   PlusIcon,
   FolderPlusIcon,
@@ -28,7 +28,7 @@ import SpotlightSearch from '../ui/SpotlightSearch'
 import ConfirmModal from '../modals/ConfirmModal'
 import { defaultItems } from '../../utils/defaultData'
 import { isFolderItem } from '../../types'
-import type { DesktopItem, FolderItem, LinkItem } from '../../types'
+import type { DesktopItem, FolderItem, LinkItem, Position } from '../../types'
 
 interface DesktopCanvasProps {
   theme: 'dark' | 'light'
@@ -36,6 +36,8 @@ interface DesktopCanvasProps {
 }
 
 export default function DesktopCanvas({ theme, onToggleTheme }: DesktopCanvasProps) {
+  const [items, setItems] = useState<DesktopItem[]>(defaultItems)
+
   const sensors = useSensors(
     useSensor(PointerSensor, { activationConstraint: { distance: 8 } }),
     useSensor(TouchSensor, { activationConstraint: { delay: 250, tolerance: 5 } }),
@@ -51,8 +53,37 @@ export default function DesktopCanvas({ theme, onToggleTheme }: DesktopCanvasPro
   }
 
   function handleDragEnd(event: DragEndEvent) {
-    console.log('dragEnd', event.active.id, '→', event.over?.id)
-    // UIStore: setDraggingItem(null)
+    const { active, over } = event
+
+    if (!over) return
+
+    const overData = over.data.current
+    if (overData?.type === 'cell') {
+      const newPos: Position = { col: overData.col, row: overData.row }
+
+      setItems(prevItems => {
+        const activeItem = prevItems.find(i => i.id === String(active.id))
+        if (!activeItem) return prevItems
+
+        const existingItem = prevItems.find(
+          i =>
+            i.position.col === newPos.col &&
+            i.position.row === newPos.row &&
+            i.parentId === null &&
+            i.id !== String(active.id),
+        )
+
+        return prevItems.map(item => {
+          if (item.id === String(active.id)) {
+            return { ...item, position: newPos }
+          }
+          if (existingItem && item.id === existingItem.id) {
+            return { ...item, position: activeItem.position }
+          }
+          return item
+        })
+      })
+    }
   }
 
   const contextMenu = useContextMenu()
@@ -83,7 +114,7 @@ export default function DesktopCanvas({ theme, onToggleTheme }: DesktopCanvasPro
   } | null>(null)
 
   const getChildCount = (folderId: string) =>
-    defaultItems.filter(item => item.parentId === folderId).length
+    items.filter(item => item.parentId === folderId).length
 
   // Später kommt dieser Wert aus dem desktopStore (Task 6.1)
   const wallpaper = undefined // undefined = animierter Gradient
@@ -114,7 +145,7 @@ export default function DesktopCanvas({ theme, onToggleTheme }: DesktopCanvasPro
     setOpenFolderIds(prev => prev.filter(fid => fid !== id))
   }
 
-  const openFolders = defaultItems.filter(
+  const openFolders = items.filter(
     item => isFolderItem(item) && openFolderIds.includes(item.id),
   ) as FolderItem[]
 
@@ -135,14 +166,14 @@ export default function DesktopCanvas({ theme, onToggleTheme }: DesktopCanvasPro
     {
       label: 'Bearbeiten',
       icon: <PencilIcon />,
-      onClick: () => setEditingItem(defaultItems.find(i => i.id === itemId) ?? null),
+      onClick: () => setEditingItem(items.find(i => i.id === itemId) ?? null),
     },
     {
       label: 'Löschen',
       icon: <TrashIcon />,
       danger: true,
       onClick: () => {
-        const item = defaultItems.find(i => i.id === itemId)
+        const item = items.find(i => i.id === itemId)
         if (!item) return
         setConfirmState({
           isOpen: true,
@@ -163,7 +194,7 @@ export default function DesktopCanvas({ theme, onToggleTheme }: DesktopCanvasPro
     {
       label: 'Bearbeiten',
       icon: <PencilIcon />,
-      onClick: () => setEditingItem(defaultItems.find(i => i.id === folderId) ?? null),
+      onClick: () => setEditingItem(items.find(i => i.id === folderId) ?? null),
     },
     {
       divider: true,
@@ -171,7 +202,7 @@ export default function DesktopCanvas({ theme, onToggleTheme }: DesktopCanvasPro
       icon: <TrashIcon />,
       danger: true,
       onClick: () => {
-        const item = defaultItems.find(i => i.id === folderId)
+        const item = items.find(i => i.id === folderId)
         if (!item) return
         setConfirmState({
           isOpen: true,
@@ -200,6 +231,8 @@ export default function DesktopCanvas({ theme, onToggleTheme }: DesktopCanvasPro
       {/* Desktop-Grid mit Abstand nach unten für die Taskbar */}
       <div className="relative z-10 w-full h-full pb-12">
         <DesktopGrid
+          items={items.filter(i => i.parentId === null)}
+          allItems={items}
           onIconContextMenu={handleIconContextMenu}
           onFolderContextMenu={handleFolderContextMenu}
           onFolderDoubleClick={handleFolderDoubleClick}
@@ -211,7 +244,7 @@ export default function DesktopCanvas({ theme, onToggleTheme }: DesktopCanvasPro
         <FolderWindow
           key={folder.id}
           folder={folder}
-          items={defaultItems.filter(item => item.parentId === folder.id)}
+          items={items.filter(item => item.parentId === folder.id)}
           onClose={() => handleFolderClose(folder.id)}
         />
       ))}
@@ -272,7 +305,7 @@ export default function DesktopCanvas({ theme, onToggleTheme }: DesktopCanvasPro
       <SpotlightSearch
         isOpen={isSearchOpen}
         onClose={() => setIsSearchOpen(false)}
-        items={defaultItems}
+        items={items}
         onOpenFolder={id => handleFolderDoubleClick(id)}
       />
       <ConfirmModal

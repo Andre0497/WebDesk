@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import {
   DndContext,
+  DragOverlay,
   PointerSensor,
   TouchSensor,
   rectIntersection,
@@ -17,6 +18,7 @@ import {
 } from '@heroicons/react/24/outline'
 import AnimatedBackground from './AnimatedBackground'
 import DesktopGrid from './DesktopGrid'
+import DragPreview from './DragPreview'
 import Taskbar from '../taskbar/Taskbar'
 import FolderWindow from '../windows/FolderWindow'
 import { useContextMenu } from '../../hooks/useContextMenu'
@@ -29,6 +31,7 @@ import ConfirmModal from '../modals/ConfirmModal'
 import { defaultItems } from '../../utils/defaultData'
 import { isFolderItem } from '../../types'
 import type { DesktopItem, FolderItem, LinkItem, Position } from '../../types'
+import type { DraggableData } from '../../types'
 
 interface DesktopCanvasProps {
   theme: 'dark' | 'light'
@@ -37,6 +40,7 @@ interface DesktopCanvasProps {
 
 export default function DesktopCanvas({ theme, onToggleTheme }: DesktopCanvasProps) {
   const [items, setItems] = useState<DesktopItem[]>(defaultItems)
+  const [activeItem, setActiveItem] = useState<DesktopItem | null>(null)
 
   const sensors = useSensors(
     useSensor(PointerSensor, { activationConstraint: { distance: 8 } }),
@@ -44,8 +48,9 @@ export default function DesktopCanvas({ theme, onToggleTheme }: DesktopCanvasPro
   )
 
   function handleDragStart(event: DragStartEvent) {
-    console.log('dragStart', event.active.id)
-    // UIStore: setDraggingItem(event.active.id)
+    const data = event.active.data.current as DraggableData
+    setActiveItem(data.item)
+    document.body.classList.add('is-dragging')
   }
 
   function handleDragOver(event: DragOverEvent) {
@@ -53,6 +58,9 @@ export default function DesktopCanvas({ theme, onToggleTheme }: DesktopCanvasPro
   }
 
   function handleDragEnd(event: DragEndEvent) {
+    setActiveItem(null)
+    document.body.classList.remove('is-dragging')
+
     const { active, over } = event
 
     if (!over) return
@@ -112,6 +120,11 @@ export default function DesktopCanvas({ theme, onToggleTheme }: DesktopCanvasPro
         })
       })
     }
+  }
+
+  function handleDragCancel() {
+    setActiveItem(null)
+    document.body.classList.remove('is-dragging')
   }
 
   const contextMenu = useContextMenu()
@@ -249,6 +262,7 @@ export default function DesktopCanvas({ theme, onToggleTheme }: DesktopCanvasPro
       onDragStart={handleDragStart}
       onDragOver={handleDragOver}
       onDragEnd={handleDragEnd}
+      onDragCancel={handleDragCancel}
     >
     <div
       className="relative w-screen h-screen overflow-hidden select-none"
@@ -354,6 +368,10 @@ export default function DesktopCanvas({ theme, onToggleTheme }: DesktopCanvasPro
         isDangerous={true}
       />
     </div>
+
+      <DragOverlay dropAnimation={null}>
+        {activeItem ? <DragPreview item={activeItem} /> : null}
+      </DragOverlay>
     </DndContext>
   )
 }

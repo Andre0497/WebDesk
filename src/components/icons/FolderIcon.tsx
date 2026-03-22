@@ -59,7 +59,7 @@ export default function FolderIcon({
       ref={setNodeRef}
       style={style}
       animate={{
-        opacity: isDragging ? 0.4 : 1,
+        opacity: isDragging ? 0 : 1,
         scale: isOver ? 1.15 : isDragging ? 0.95 : 1,
       }}
       transition={{ duration: 0.15 }}

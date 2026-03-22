@@ -43,7 +43,7 @@ export default function LinkIcon({ item, onContextMenu }: LinkIconProps) {
     <motion.div
       ref={setNodeRef}
       style={style}
-      animate={{ opacity: isDragging ? 0.4 : 1, scale: isDragging ? 0.95 : 1 }}
+      animate={{ opacity: isDragging ? 0 : 1, scale: isDragging ? 0.95 : 1 }}
       transition={{ duration: 0.15 }}
       {...listeners}
       {...attributes}

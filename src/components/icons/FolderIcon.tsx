@@ -1,4 +1,4 @@
-import { useDraggable } from '@dnd-kit/core'
+import { useDraggable, useDroppable } from '@dnd-kit/core'
 import { CSS } from '@dnd-kit/utilities'
 import { motion } from 'framer-motion'
 import { FolderIcon as HeroFolderIcon } from '@heroicons/react/24/solid'
@@ -18,13 +18,26 @@ export default function FolderIcon({
   onDoubleClick,
   onContextMenu,
 }: FolderIconProps) {
-  const { attributes, listeners, setNodeRef, transform, isDragging } = useDraggable({
+  const { attributes, listeners, setNodeRef: setDragRef, transform, isDragging } = useDraggable({
     id: item.id,
     data: {
       type: 'folder',
       item,
     },
   })
+
+  const { setNodeRef: setDropRef, isOver } = useDroppable({
+    id: `folder-drop-${item.id}`,
+    data: {
+      type: 'folder',
+      folderId: item.id,
+    },
+  })
+
+  const setNodeRef = (node: HTMLElement | null) => {
+    setDragRef(node)
+    setDropRef(node)
+  }
 
   const style = {
     transform: CSS.Translate.toString(transform),
@@ -45,11 +58,14 @@ export default function FolderIcon({
     <motion.div
       ref={setNodeRef}
       style={style}
-      animate={{ opacity: isDragging ? 0.4 : 1, scale: isDragging ? 0.95 : 1 }}
+      animate={{
+        opacity: isDragging ? 0.4 : 1,
+        scale: isOver ? 1.15 : isDragging ? 0.95 : 1,
+      }}
       transition={{ duration: 0.15 }}
       {...listeners}
       {...attributes}
-      className="flex flex-col items-center justify-start w-[88px] cursor-grab active:cursor-grabbing group select-none"
+      className={`flex flex-col items-center justify-start w-[88px] cursor-grab active:cursor-grabbing group select-none${isOver ? ' drop-shadow-[0_0_14px_rgba(255,255,255,0.7)]' : ''}`}
       onDoubleClick={handleDoubleClick}
       onContextMenu={handleContextMenu}
       title={item.name}
@@ -57,10 +73,11 @@ export default function FolderIcon({
       {/* Icon-Container */}
       <div className="relative">
         <div
-          className="w-14 h-14 rounded-xl flex items-center justify-center
-                     backdrop-blur-sm border border-white/20
+          className={`w-14 h-14 rounded-xl flex items-center justify-center
+                     backdrop-blur-sm
                      group-hover:scale-110 group-active:scale-95
-                     transition-all duration-150 ease-out"
+                     transition-all duration-150 ease-out
+                     ${isOver ? 'border-2 border-white/60 ring-2 ring-white/60' : 'border border-white/20'}`}
           style={{ backgroundColor: `${item.color}33` }}
         >
           {item.emoji ? (

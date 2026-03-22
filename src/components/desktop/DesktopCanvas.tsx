@@ -58,11 +58,39 @@ export default function DesktopCanvas({ theme, onToggleTheme }: DesktopCanvasPro
     if (!over) return
 
     const overData = over.data.current
+    const activeId = String(active.id)
+
+    if (overData?.type === 'folder') {
+      // Prevent dropping an item onto itself
+      if (activeId === overData.folderId) return
+
+      setItems(prevItems => {
+        const activeItem = prevItems.find(i => i.id === activeId)
+        if (!activeItem) return prevItems
+
+        const itemsInFolder = prevItems.filter(i => i.parentId === overData.folderId)
+        const newPos: Position = {
+          col: itemsInFolder.length % 4,
+          row: Math.floor(itemsInFolder.length / 4),
+        }
+
+        return prevItems.map(item =>
+          item.id === activeId ? { ...item, position: newPos, parentId: overData.folderId } : item,
+        )
+      })
+
+      // Open the target folder
+      setOpenFolderIds(prev =>
+        prev.includes(overData.folderId) ? prev : [...prev, overData.folderId],
+      )
+      return
+    }
+
     if (overData?.type === 'cell') {
       const newPos: Position = { col: overData.col, row: overData.row }
 
       setItems(prevItems => {
-        const activeItem = prevItems.find(i => i.id === String(active.id))
+        const activeItem = prevItems.find(i => i.id === activeId)
         if (!activeItem) return prevItems
 
         const existingItem = prevItems.find(
@@ -70,11 +98,11 @@ export default function DesktopCanvas({ theme, onToggleTheme }: DesktopCanvasPro
             i.position.col === newPos.col &&
             i.position.row === newPos.row &&
             i.parentId === null &&
-            i.id !== String(active.id),
+            i.id !== activeId,
         )
 
         return prevItems.map(item => {
-          if (item.id === String(active.id)) {
+          if (item.id === activeId) {
             return { ...item, position: newPos }
           }
           if (existingItem && item.id === existingItem.id) {

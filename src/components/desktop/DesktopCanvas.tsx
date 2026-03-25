@@ -288,6 +288,14 @@ export default function DesktopCanvas({ theme, onToggleTheme }: DesktopCanvasPro
           folder={folder}
           items={items.filter(item => item.parentId === folder.id)}
           onClose={() => handleFolderClose(folder.id)}
+          onItemsReorder={updates => {
+            setItems(prev =>
+              prev.map(item => {
+                const update = updates.find(u => u.id === item.id)
+                return update ? { ...item, position: update.position } : item
+              }),
+            )
+          }}
         />
       ))}
 

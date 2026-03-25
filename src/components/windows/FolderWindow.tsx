@@ -1,14 +1,18 @@
 import { useState, useRef } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
+import { DndContext, closestCenter } from '@dnd-kit/core'
+import type { DragEndEvent } from '@dnd-kit/core'
+import { arrayMove } from '@dnd-kit/sortable'
 import WindowTitleBar from './WindowTitleBar'
 import WindowGrid from './WindowGrid'
-import type { FolderItem, DesktopItem } from '../../types'
+import type { FolderItem, DesktopItem, Position } from '../../types'
 
 interface FolderWindowProps {
   folder: FolderItem
   items: DesktopItem[]
   onClose: () => void
   onItemContextMenu?: (e: React.MouseEvent, id: string) => void
+  onItemsReorder?: (updates: Array<{ id: string; position: Position }>) => void
 }
 
 const windowVariants = {
@@ -32,6 +36,7 @@ export default function FolderWindow({
   items,
   onClose,
   onItemContextMenu,
+  onItemsReorder,
 }: FolderWindowProps) {
   const [position, setPosition] = useState(
     folder.windowPosition ?? { x: 200, y: 100 },
@@ -66,6 +71,27 @@ export default function FolderWindow({
     window.addEventListener('mouseup', handleMouseUp)
   }
 
+  const sortedItems = [...items].sort(
+    (a, b) => a.position.row - b.position.row || a.position.col - b.position.col,
+  )
+
+  function handleFolderDragEnd(event: DragEndEvent) {
+    const { active, over } = event
+    if (!over || active.id === over.id) return
+
+    const oldIndex = sortedItems.findIndex(i => i.id === active.id)
+    const newIndex = sortedItems.findIndex(i => i.id === over.id)
+
+    if (oldIndex === -1 || newIndex === -1) return
+
+    const reordered = arrayMove(sortedItems, oldIndex, newIndex)
+    const updates = reordered.map((item, index) => ({
+      id: item.id,
+      position: { col: index % 4, row: Math.floor(index / 4) },
+    }))
+    onItemsReorder?.(updates)
+  }
+
   return (
     <AnimatePresence>
       <motion.div
@@ -90,7 +116,9 @@ export default function FolderWindow({
         />
 
         <div className="flex-1 overflow-y-auto p-2">
-          <WindowGrid items={items} onItemContextMenu={onItemContextMenu} />
+          <DndContext collisionDetection={closestCenter} onDragEnd={handleFolderDragEnd}>
+            <WindowGrid items={items} onItemContextMenu={onItemContextMenu} />
+          </DndContext>
         </div>
 
         <div className="px-4 py-2 border-t border-white/10 text-xs text-white/40 text-right">

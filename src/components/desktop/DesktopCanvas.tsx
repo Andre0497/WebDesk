@@ -4,11 +4,12 @@ import {
   DragOverlay,
   PointerSensor,
   TouchSensor,
-  rectIntersection,
   useSensor,
   useSensors,
 } from '@dnd-kit/core'
 import type { DragEndEvent, DragOverEvent, DragStartEvent } from '@dnd-kit/core'
+import { restrictToParentElement } from '@dnd-kit/modifiers'
+import { desktopCollisionDetection } from '../../utils/dndCollision'
 import {
   PlusIcon,
   FolderPlusIcon,
@@ -258,7 +259,8 @@ export default function DesktopCanvas({ theme, onToggleTheme }: DesktopCanvasPro
   return (
     <DndContext
       sensors={sensors}
-      collisionDetection={rectIntersection}
+      collisionDetection={desktopCollisionDetection}
+      modifiers={[restrictToParentElement]}
       onDragStart={handleDragStart}
       onDragOver={handleDragOver}
       onDragEnd={handleDragEnd}

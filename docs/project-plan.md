@@ -80,7 +80,7 @@
 | 4.4 | Drop in Ordner | Ordner-Icon als Drop-Target → Item wird in Ordner verschoben | 🔴 Hoch | ⬜ Offen |
 | 4.5 | Drag-Overlay / Ghost-Preview | Schöne Semi-transparente Vorschau beim Ziehen | 🟡 Mittel | ✅ Erledigt |
 | 4.6 | Sortierung innerhalb Ordner | `@dnd-kit/sortable` für Items in `FolderWindow` | 🟡 Mittel | ⬜ Offen |
-| 4.7 | Kollisionsverhalten | Snap-to-Grid oder freie Positionierung konfigurieren | 🟢 Niedrig | ⬜ Offen |
+| 4.7 | Kollisionsverhalten | Snap-to-Grid oder freie Positionierung konfigurieren | 🟢 Niedrig | ✅ Erledigt |
 
 **Meilenstein M4:** Drag & Drop auf Desktop und in Ordner funktioniert ✅
 

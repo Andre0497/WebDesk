@@ -1,5 +1,6 @@
-import LinkIcon from '../icons/LinkIcon'
-import FolderIcon from '../icons/FolderIcon'
+import { SortableContext, rectSortingStrategy } from '@dnd-kit/sortable'
+import SortableLinkIcon from '../icons/SortableLinkIcon'
+import SortableFolderIcon from '../icons/SortableFolderIcon'
 import type { DesktopItem, LinkItem, FolderItem } from '../../types'
 import { isLinkItem, isFolderItem } from '../../types'
 
@@ -18,18 +19,31 @@ export default function WindowGrid({ items, onItemContextMenu }: WindowGridProps
     )
   }
 
+  const sortedItems = [...items].sort(
+    (a, b) => a.position.row - b.position.row || a.position.col - b.position.col,
+  )
+
+  const itemIds = sortedItems.map(i => i.id)
+
   return (
-    <div className="flex flex-wrap gap-3 p-2">
-      {items.map(item => (
-        <div key={item.id}>
-          {isLinkItem(item) && (
-            <LinkIcon item={item as LinkItem} onContextMenu={onItemContextMenu} />
-          )}
-          {isFolderItem(item) && (
-            <FolderIcon item={item as FolderItem} onContextMenu={onItemContextMenu} />
-          )}
-        </div>
-      ))}
-    </div>
+    <SortableContext items={itemIds} strategy={rectSortingStrategy}>
+      <div className="grid grid-cols-4 gap-4 p-2">
+        {sortedItems.map(item =>
+          isLinkItem(item) ? (
+            <SortableLinkIcon
+              key={item.id}
+              item={item as LinkItem}
+              onContextMenu={onItemContextMenu}
+            />
+          ) : isFolderItem(item) ? (
+            <SortableFolderIcon
+              key={item.id}
+              item={item as FolderItem}
+              onContextMenu={onItemContextMenu}
+            />
+          ) : null,
+        )}
+      </div>
+    </SortableContext>
   )
 }

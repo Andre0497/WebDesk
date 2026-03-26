@@ -1,7 +1,10 @@
+import { useState } from 'react'
+import { motion, useReducedMotion } from 'framer-motion'
 import { useDesktopGrid } from '../../hooks/useDesktopGrid'
 import LinkIcon from '../icons/LinkIcon'
 import FolderIcon from '../icons/FolderIcon'
 import GridCell from './GridCell'
+import { desktopGridVariants, iconEnterVariants } from '../../utils/animations'
 import type { DesktopItem, LinkItem, FolderItem } from '../../types'
 
 interface DesktopGridProps {
@@ -20,6 +23,12 @@ export default function DesktopGrid({
   onFolderDoubleClick,
 }: DesktopGridProps) {
   const { cols, rows, cellSize } = useDesktopGrid(100)
+  const shouldReduceMotion = useReducedMotion()
+
+  // Capture item IDs present on the initial render (lazy initializer runs once).
+  // Items added after mount are identified by absence from this set and will
+  // animate independently rather than relying on the parent stagger.
+  const [initialItemIds] = useState<Set<string>>(() => new Set(items.map(i => i.id)))
 
   // Items nach Grid-Position indexieren
   const itemMap = new Map(items.map(i => [`${i.position.col}-${i.position.row}`, i]))
@@ -28,7 +37,7 @@ export default function DesktopGrid({
     allItems.filter(item => item.parentId === folderId).length
 
   return (
-    <div
+    <motion.div
       className="relative w-full h-full"
       style={{
         display: 'grid',
@@ -37,6 +46,9 @@ export default function DesktopGrid({
         padding: '8px',
         gap: '4px',
       }}
+      variants={shouldReduceMotion ? undefined : desktopGridVariants}
+      initial={shouldReduceMotion ? false : 'hidden'}
+      animate="visible"
     >
       {Array.from({ length: rows }, (_, row) =>
         Array.from({ length: cols }, (_, col) => {
@@ -44,16 +56,24 @@ export default function DesktopGrid({
           return (
             <GridCell key={`${col}-${row}`} col={col} row={row}>
               {item && (
-                item.type === 'link' ? (
-                  <LinkIcon item={item as LinkItem} onContextMenu={onIconContextMenu} />
-                ) : (
-                  <FolderIcon
-                    item={item as FolderItem}
-                    itemCount={getItemCount(item.id)}
-                    onDoubleClick={onFolderDoubleClick}
-                    onContextMenu={onFolderContextMenu}
-                  />
-                )
+                <motion.div
+                  variants={shouldReduceMotion ? undefined : iconEnterVariants}
+                  {...(!shouldReduceMotion && !initialItemIds.has(item.id)
+                    ? { initial: 'hidden', animate: 'visible' }
+                    : {})}
+                  layout
+                >
+                  {item.type === 'link' ? (
+                    <LinkIcon item={item as LinkItem} onContextMenu={onIconContextMenu} />
+                  ) : (
+                    <FolderIcon
+                      item={item as FolderItem}
+                      itemCount={getItemCount(item.id)}
+                      onDoubleClick={onFolderDoubleClick}
+                      onContextMenu={onFolderContextMenu}
+                    />
+                  )}
+                </motion.div>
               )}
             </GridCell>
           )
@@ -71,6 +91,6 @@ export default function DesktopGrid({
           }}
         />
       )}
-    </div>
+    </motion.div>
   )
 }

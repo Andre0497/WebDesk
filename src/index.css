@@ -13,6 +13,16 @@
   --color-accent: #6366f1;
   --color-glass: rgba(255, 255, 255, 0.15);
   --color-glass-border: rgba(255, 255, 255, 0.3);
+
+  /* Glassmorphism Layers */
+  --glass-bg: rgba(18, 18, 26, 0.85);
+  --glass-bg-modal: rgba(18, 18, 26, 0.95);
+  --glass-bg-light: rgba(255, 255, 255, 0.06);
+  --glass-border: rgba(255, 255, 255, 0.12);
+  --glass-border-light: rgba(255, 255, 255, 0.08);
+  --glass-blur: blur(20px);
+  --glass-blur-sm: blur(8px);
+  --glass-saturate: saturate(180%);
 }
 
 /* === Dark Mode === */

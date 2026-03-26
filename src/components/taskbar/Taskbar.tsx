@@ -17,10 +17,16 @@ export default function Taskbar({
 }: TaskbarProps) {
   return (
     <div
-      className="absolute bottom-0 left-0 right-0 z-50 h-12 px-4
+      className="absolute bottom-0 left-0 right-0 z-50 px-6
                     flex items-center justify-between
-                    bg-white/10 backdrop-blur-md border-t border-white/20
-                    text-white"
+                    border-t text-white"
+      style={{
+        height: '52px',
+        background: 'rgba(10, 10, 15, 0.85)',
+        backdropFilter: 'blur(20px) saturate(180%)',
+        WebkitBackdropFilter: 'blur(20px) saturate(180%)',
+        borderColor: 'var(--glass-border-light)',
+      }}
     >
       {/* Linke Seite: App-Name */}
       <span className="font-bold text-sm tracking-widest uppercase select-none">WebDesk</span>

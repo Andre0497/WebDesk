@@ -30,6 +30,7 @@ import AddFolderModal from '../modals/AddFolderModal'
 import EditItemModal from '../modals/EditItemModal'
 import SpotlightSearch from '../ui/SpotlightSearch'
 import ConfirmModal from '../modals/ConfirmModal'
+import SettingsModal from '../modals/SettingsModal'
 import { defaultItems } from '../../utils/defaultData'
 import { isFolderItem } from '../../types'
 import type { DesktopItem, FolderItem, LinkItem, Position } from '../../types'
@@ -138,6 +139,7 @@ export default function DesktopCanvas({ theme, onToggleTheme }: DesktopCanvasPro
   const [isAddFolderOpen, setIsAddFolderOpen] = useState(false)
   const [editingItem, setEditingItem] = useState<DesktopItem | null>(null)
   const [isSearchOpen, setIsSearchOpen] = useState(false)
+  const [isSettingsOpen, setIsSettingsOpen] = useState(false)
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -159,12 +161,8 @@ export default function DesktopCanvas({ theme, onToggleTheme }: DesktopCanvasPro
   const getChildCount = (folderId: string) =>
     items.filter(item => item.parentId === folderId).length
 
-  // Später kommt dieser Wert aus dem desktopStore (Task 6.1)
-  const wallpaper = undefined // undefined = animierter Gradient
-
   const handleSettingsClick = () => {
-    // Wird in Task 3.x (SettingsModal) implementiert
-    console.log('Settings öffnen')
+    setIsSettingsOpen(true)
   }
 
   const handleContextMenu = (e: React.MouseEvent) => {
@@ -271,7 +269,7 @@ export default function DesktopCanvas({ theme, onToggleTheme }: DesktopCanvasPro
       className="relative w-screen h-screen overflow-hidden select-none"
       onContextMenu={handleContextMenu}
     >
-      <AnimatedBackground wallpaper={wallpaper} />
+      <AnimatedBackground />
 
       {/* Desktop-Grid mit Abstand nach unten für die Taskbar */}
       <div className="relative z-10 w-full h-full pb-12">
@@ -380,6 +378,7 @@ export default function DesktopCanvas({ theme, onToggleTheme }: DesktopCanvasPro
         confirmLabel="Löschen"
         isDangerous={true}
       />
+      <SettingsModal isOpen={isSettingsOpen} onClose={() => setIsSettingsOpen(false)} />
     </div>
 
       <DragOverlay dropAnimation={null}>

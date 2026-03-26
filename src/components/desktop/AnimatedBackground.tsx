@@ -1,25 +1,37 @@
-interface AnimatedBackgroundProps {
-  wallpaper?: string // z. B. 'dark-space' | 'aurora' | 'abstract' | undefined
-}
+import { AnimatePresence, motion } from 'framer-motion'
+import { WALLPAPERS } from '../../utils/wallpapers'
+import { useDesktopStore } from '../../store/desktopStore'
+import { AnimatedGradient } from './AnimatedGradient'
 
-export default function AnimatedBackground({ wallpaper }: AnimatedBackgroundProps) {
-  if (wallpaper) {
-    return (
-      <div
-        className="absolute inset-0 bg-cover bg-center bg-no-repeat"
-        style={{ backgroundImage: `url('/wallpapers/${wallpaper}.jpg')` }}
-      >
-        {/* Leichter Overlay für bessere Icon-Lesbarkeit */}
-        <div className="absolute inset-0 bg-black/20" />
-      </div>
-    )
-  }
+export default function AnimatedBackground() {
+  const wallpaperId = useDesktopStore(s => s.settings.wallpaper)
+  const wallpaper = WALLPAPERS.find(w => w.id === wallpaperId) ?? WALLPAPERS[0]
 
-  // Standard: Animierter Gradient
   return (
-    <div className="absolute inset-0 animated-gradient">
-      {/* Optionale Overlay-Schicht für Tiefe */}
-      <div className="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent" />
-    </div>
+    <AnimatePresence mode="wait">
+      <motion.div
+        key={wallpaper.id}
+        className="absolute inset-0"
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        exit={{ opacity: 0 }}
+        transition={{ duration: 0.5 }}
+      >
+        {wallpaper.type === 'animated' ? (
+          <AnimatedGradient />
+        ) : (
+          <div
+            className="absolute inset-0 bg-cover bg-center bg-no-repeat"
+            style={{
+              backgroundImage: `url(${import.meta.env.BASE_URL}${wallpaper.src})`,
+            }}
+          >
+            {/* Leichter Overlay für bessere Icon-Lesbarkeit */}
+            <div className="absolute inset-0 bg-black/20" />
+          </div>
+        )}
+      </motion.div>
+    </AnimatePresence>
   )
 }
+

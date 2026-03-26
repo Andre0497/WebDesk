@@ -1,5 +1,33 @@
 import type { Variants } from 'framer-motion'
 
+export const folderWindowVariants: Variants = {
+  hidden: {
+    opacity: 0,
+    scale: 0.8,
+    y: 20,
+  },
+  visible: {
+    opacity: 1,
+    scale: 1,
+    y: 0,
+    transition: {
+      type: 'spring',
+      stiffness: 350,
+      damping: 28,
+      mass: 0.8,
+    },
+  },
+  exit: {
+    opacity: 0,
+    scale: 0.85,
+    y: 10,
+    transition: {
+      duration: 0.18,
+      ease: 'easeIn',
+    },
+  },
+}
+
 export const desktopGridVariants: Variants = {
   hidden: {},
   visible: {

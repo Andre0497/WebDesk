@@ -9,6 +9,7 @@ import {
 } from '@dnd-kit/core'
 import type { DragEndEvent, DragOverEvent, DragStartEvent } from '@dnd-kit/core'
 import { restrictToParentElement } from '@dnd-kit/modifiers'
+import { AnimatePresence } from 'framer-motion'
 import { desktopCollisionDetection } from '../../utils/dndCollision'
 import {
   PlusIcon,
@@ -284,22 +285,24 @@ export default function DesktopCanvas({ theme, onToggleTheme }: DesktopCanvasPro
       </div>
 
       {/* Offene Ordner-Fenster */}
-      {openFolders.map(folder => (
-        <FolderWindow
-          key={folder.id}
-          folder={folder}
-          items={items.filter(item => item.parentId === folder.id)}
-          onClose={() => handleFolderClose(folder.id)}
-          onItemsReorder={updates => {
-            setItems(prev =>
-              prev.map(item => {
-                const update = updates.find(u => u.id === item.id)
-                return update ? { ...item, position: update.position } : item
-              }),
-            )
-          }}
-        />
-      ))}
+      <AnimatePresence>
+        {openFolders.map(folder => (
+          <FolderWindow
+            key={folder.id}
+            folder={folder}
+            items={items.filter(item => item.parentId === folder.id)}
+            onClose={() => handleFolderClose(folder.id)}
+            onItemsReorder={updates => {
+              setItems(prev =>
+                prev.map(item => {
+                  const update = updates.find(u => u.id === item.id)
+                  return update ? { ...item, position: update.position } : item
+                }),
+              )
+            }}
+          />
+        ))}
+      </AnimatePresence>
 
       {/* Taskbar */}
       <Taskbar

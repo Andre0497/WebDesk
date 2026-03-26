@@ -1,11 +1,12 @@
 import { useState, useRef } from 'react'
-import { motion, AnimatePresence } from 'framer-motion'
+import { motion, useReducedMotion } from 'framer-motion'
 import { DndContext, closestCenter } from '@dnd-kit/core'
 import type { DragEndEvent } from '@dnd-kit/core'
 import { arrayMove } from '@dnd-kit/sortable'
 import WindowTitleBar from './WindowTitleBar'
 import WindowGrid from './WindowGrid'
 import type { FolderItem, DesktopItem, Position } from '../../types'
+import { folderWindowVariants } from '../../utils/animations'
 
 interface FolderWindowProps {
   folder: FolderItem
@@ -13,22 +14,6 @@ interface FolderWindowProps {
   onClose: () => void
   onItemContextMenu?: (e: React.MouseEvent, id: string) => void
   onItemsReorder?: (updates: Array<{ id: string; position: Position }>) => void
-}
-
-const windowVariants = {
-  hidden: { opacity: 0, scale: 0.85, y: 20 },
-  visible: {
-    opacity: 1,
-    scale: 1,
-    y: 0,
-    transition: { type: 'spring' as const, stiffness: 300, damping: 28 },
-  },
-  exit: {
-    opacity: 0,
-    scale: 0.85,
-    y: 20,
-    transition: { duration: 0.15 },
-  },
 }
 
 export default function FolderWindow({
@@ -43,6 +28,7 @@ export default function FolderWindow({
   )
   const [isDragging, setIsDragging] = useState(false)
   const dragStartRef = useRef({ mouseX: 0, mouseY: 0, winX: 0, winY: 0 })
+  const prefersReducedMotion = useReducedMotion()
 
   const handleTitleMouseDown = (e: React.MouseEvent) => {
     e.preventDefault()
@@ -93,38 +79,40 @@ export default function FolderWindow({
   }
 
   return (
-    <AnimatePresence>
-      <motion.div
-        key={folder.id}
-        variants={windowVariants}
-        initial="hidden"
-        animate="visible"
-        exit="exit"
-        style={{ left: position.x, top: position.y }}
-        className={`fixed z-40 w-80 min-h-40 max-h-[60vh]
-                    bg-gray-800/90 backdrop-blur-md
-                    border border-white/15 rounded-2xl shadow-2xl
-                    flex flex-col overflow-hidden
-                    ${isDragging ? 'cursor-grabbing' : ''}`}
-      >
-        <WindowTitleBar
-          title={folder.name}
-          color={folder.color}
-          emoji={folder.emoji}
-          onClose={onClose}
-          dragHandleProps={{ onMouseDown: handleTitleMouseDown }}
-        />
+    <motion.div
+      key={folder.id}
+      variants={prefersReducedMotion ? undefined : folderWindowVariants}
+      initial={prefersReducedMotion ? { opacity: 0 } : 'hidden'}
+      animate={prefersReducedMotion ? { opacity: 1 } : 'visible'}
+      exit={prefersReducedMotion ? { opacity: 0 } : 'exit'}
+      style={{
+        left: position.x,
+        top: position.y,
+        transformOrigin: 'center bottom',
+      }}
+      className={`fixed z-40 w-80 min-h-40 max-h-[60vh]
+                  bg-gray-800/90 backdrop-blur-md
+                  border border-white/15 rounded-2xl shadow-2xl
+                  flex flex-col overflow-hidden
+                  ${isDragging ? 'cursor-grabbing' : ''}`}
+    >
+      <WindowTitleBar
+        title={folder.name}
+        color={folder.color}
+        emoji={folder.emoji}
+        onClose={onClose}
+        dragHandleProps={{ onMouseDown: handleTitleMouseDown }}
+      />
 
-        <div className="flex-1 overflow-y-auto p-2">
-          <DndContext collisionDetection={closestCenter} onDragEnd={handleFolderDragEnd}>
-            <WindowGrid items={items} onItemContextMenu={onItemContextMenu} />
-          </DndContext>
-        </div>
+      <div className="flex-1 overflow-y-auto p-2">
+        <DndContext collisionDetection={closestCenter} onDragEnd={handleFolderDragEnd}>
+          <WindowGrid items={items} onItemContextMenu={onItemContextMenu} />
+        </DndContext>
+      </div>
 
-        <div className="px-4 py-2 border-t border-white/10 text-xs text-white/40 text-right">
-          {items.length} {items.length === 1 ? 'Element' : 'Elemente'}
-        </div>
-      </motion.div>
-    </AnimatePresence>
+      <div className="px-4 py-2 border-t border-white/10 text-xs text-white/40 text-right">
+        {items.length} {items.length === 1 ? 'Element' : 'Elemente'}
+      </div>
+    </motion.div>
   )
 }

@@ -98,7 +98,7 @@
 | 5.4 | Modal Animationen | Fade + Scale für alle Modals | 🟡 Mittel | ✅ Erledigt |
 | 5.5 | Glassmorphism auf Fenstern | Backdrop-blur + semi-transparente Hintergründe | 🔴 Hoch | ✅ Erledigt |
 | 5.6 | Wallpaper-Auswahl | Mehrere Hintergrundbilder auswählbar (lokal gespeichert) | 🟢 Niedrig | ✅ Erledigt |
-| 5.7 | Ripple-Effekt auf Buttons | Kleiner Click-Ripple wie Material Design | 🟢 Niedrig | ⬜ Offen |
+| 5.7 | Ripple-Effekt auf Buttons | Kleiner Click-Ripple wie Material Design | 🟢 Niedrig | ✅ Erledigt |
 | 5.8 | Ladeanimation / Splash Screen | Kurzer Intro-Screen beim ersten Laden | 🟢 Niedrig | ⬜ Offen |
 
 **Meilenstein M5:** App wirkt „lebendig" und polished ✅

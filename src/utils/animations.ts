@@ -1,5 +1,54 @@
 import type { Variants } from 'framer-motion'
 
+export const overlayVariants: Variants = {
+  hidden: {
+    opacity: 0,
+  },
+  visible: {
+    opacity: 1,
+    transition: {
+      duration: 0.2,
+      ease: 'easeOut',
+    },
+  },
+  exit: {
+    opacity: 0,
+    transition: {
+      duration: 0.15,
+      ease: 'easeIn',
+    },
+  },
+}
+
+export const modalVariants: Variants = {
+  hidden: {
+    opacity: 0,
+    scale: 0.9,
+    y: 10,
+  },
+  visible: {
+    opacity: 1,
+    scale: 1,
+    y: 0,
+    transition: {
+      type: 'spring',
+      stiffness: 350,
+      damping: 28,
+      mass: 0.8,
+      delay: 0.05,
+    },
+  },
+  exit: {
+    opacity: 0,
+    scale: 0.92,
+    y: 8,
+    transition: {
+      duration: 0.15,
+      ease: 'easeIn',
+    },
+  },
+}
+
 export const folderWindowVariants: Variants = {
   hidden: {
     opacity: 0,

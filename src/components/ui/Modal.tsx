@@ -1,6 +1,8 @@
+import { useEffect } from 'react'
 import { Dialog } from '@headlessui/react'
-import { motion, AnimatePresence } from 'framer-motion'
+import { motion, AnimatePresence, useReducedMotion } from 'framer-motion'
 import { XMarkIcon } from '@heroicons/react/24/outline'
+import { overlayVariants, modalVariants } from '../../utils/animations'
 
 interface ModalProps {
   isOpen: boolean
@@ -17,22 +19,6 @@ const sizeClasses = {
   lg: 'max-w-lg',
 }
 
-const backdropVariants = {
-  hidden: { opacity: 0 },
-  visible: { opacity: 1 },
-}
-
-const panelVariants = {
-  hidden: { opacity: 0, scale: 0.95, y: -10 },
-  visible: {
-    opacity: 1,
-    scale: 1,
-    y: 0,
-    transition: { type: 'spring' as const, stiffness: 300, damping: 30 },
-  },
-  exit: { opacity: 0, scale: 0.95, y: 10 },
-}
-
 export default function Modal({
   isOpen,
   onClose,
@@ -41,6 +27,18 @@ export default function Modal({
   size = 'md',
   showCloseButton = true,
 }: ModalProps) {
+  const shouldReduceMotion = useReducedMotion()
+
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') onClose()
+    }
+    if (isOpen) {
+      document.addEventListener('keydown', handleKeyDown)
+    }
+    return () => document.removeEventListener('keydown', handleKeyDown)
+  }, [isOpen, onClose])
+
   return (
     <AnimatePresence>
       {isOpen && (
@@ -48,16 +46,20 @@ export default function Modal({
           {/* Backdrop */}
           <motion.div
             className="fixed inset-0 bg-black/60 backdrop-blur-sm"
-            variants={backdropVariants}
+            variants={shouldReduceMotion ? undefined : overlayVariants}
             initial="hidden"
             animate="visible"
-            exit="hidden"
-            transition={{ duration: 0.2 }}
+            exit="exit"
           />
 
           {/* Zentrierter Container */}
           <div className="fixed inset-0 flex items-center justify-center p-4">
-            <motion.div variants={panelVariants} initial="hidden" animate="visible" exit="exit">
+            <motion.div
+              variants={shouldReduceMotion ? undefined : modalVariants}
+              initial="hidden"
+              animate="visible"
+              exit="exit"
+            >
               <Dialog.Panel
                 className={`w-full ${sizeClasses[size]} bg-gray-800/95 backdrop-blur-md border border-white/10 rounded-2xl shadow-2xl text-white`}
               >

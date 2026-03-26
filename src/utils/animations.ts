@@ -55,3 +55,42 @@ export const iconEnterVariants: Variants = {
     },
   },
 }
+
+export const iconVariants: Variants = {
+  rest: {
+    scale: 1,
+    rotate: 0,
+  },
+  hover: {
+    scale: 1.08,
+    transition: {
+      type: 'spring',
+      stiffness: 400,
+      damping: 30,
+    },
+  },
+  tap: {
+    scale: 0.95,
+    transition: {
+      type: 'spring',
+      stiffness: 600,
+      damping: 20,
+    },
+  },
+}
+
+export const iconBgVariants: Variants = {
+  rest: {
+    opacity: 0,
+    backgroundColor: 'rgba(255, 255, 255, 0)',
+  },
+  hover: {
+    opacity: 1,
+    backgroundColor: 'rgba(255, 255, 255, 0.08)',
+    boxShadow: '0 0 20px rgba(99, 102, 241, 0.25)',
+    transition: {
+      duration: 0.15,
+      ease: 'easeOut',
+    },
+  },
+}

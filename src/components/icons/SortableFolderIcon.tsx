@@ -3,6 +3,7 @@ import { CSS } from '@dnd-kit/utilities'
 import { FolderIcon as HeroFolderIcon } from '@heroicons/react/24/solid'
 import type { FolderItem } from '../../types'
 import IconLabel from './IconLabel'
+import { IconWrapper } from './IconWrapper'
 
 interface SortableFolderIconProps {
   item: FolderItem
@@ -43,27 +44,29 @@ export default function SortableFolderIcon({
       style={style}
       {...attributes}
       {...listeners}
-      className="flex flex-col items-center justify-start w-[88px] cursor-grab active:cursor-grabbing group select-none"
-      onDoubleClick={handleDoubleClick}
-      onContextMenu={handleContextMenu}
+      className="w-[88px] cursor-grab active:cursor-grabbing select-none"
       title={item.name}
     >
-      <div className="relative">
-        <div
-          className="w-14 h-14 rounded-xl flex items-center justify-center
-                     backdrop-blur-sm border border-white/20
-                     group-hover:scale-110 group-active:scale-95
-                     transition-all duration-150 ease-out"
-          style={{ backgroundColor: `${item.color}33` }}
-        >
-          {item.emoji ? (
-            <span className="text-3xl leading-none select-none">{item.emoji}</span>
-          ) : (
-            <HeroFolderIcon className="w-9 h-9 drop-shadow-md" style={{ color: item.color }} />
-          )}
+      <IconWrapper
+        onDoubleClick={handleDoubleClick}
+        onContextMenu={handleContextMenu}
+        isDragging={isDragging}
+      >
+        <div className="relative z-10">
+          <div
+            className="w-14 h-14 rounded-xl flex items-center justify-center
+                       backdrop-blur-sm border border-white/20"
+            style={{ backgroundColor: `${item.color}33` }}
+          >
+            {item.emoji ? (
+              <span className="text-3xl leading-none select-none">{item.emoji}</span>
+            ) : (
+              <HeroFolderIcon className="w-9 h-9 drop-shadow-md" style={{ color: item.color }} />
+            )}
+          </div>
         </div>
-      </div>
-      <IconLabel name={item.name} />
+        <IconLabel name={item.name} />
+      </IconWrapper>
     </div>
   )
 }

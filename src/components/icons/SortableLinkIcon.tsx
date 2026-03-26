@@ -4,6 +4,7 @@ import { CSS } from '@dnd-kit/utilities'
 import { GlobeAltIcon } from '@heroicons/react/24/outline'
 import type { LinkItem } from '../../types'
 import IconLabel from './IconLabel'
+import { IconWrapper } from './IconWrapper'
 
 interface SortableLinkIconProps {
   item: LinkItem
@@ -43,30 +44,31 @@ export default function SortableLinkIcon({ item, onContextMenu }: SortableLinkIc
       style={style}
       {...attributes}
       {...listeners}
-      className="flex flex-col items-center justify-start w-[88px] cursor-grab active:cursor-grabbing group select-none"
-      onDoubleClick={handleDoubleClick}
-      onContextMenu={handleContextMenu}
+      className="w-[88px] cursor-grab active:cursor-grabbing select-none"
       title={item.url}
     >
-      <div
-        className="w-14 h-14 rounded-xl flex items-center justify-center
-                   bg-white/10 backdrop-blur-sm border border-white/20
-                   group-hover:bg-white/20 group-hover:scale-110
-                   group-active:scale-95
-                   transition-all duration-150 ease-out"
+      <IconWrapper
+        onDoubleClick={handleDoubleClick}
+        onContextMenu={handleContextMenu}
+        isDragging={isDragging}
       >
-        {item.faviconUrl && !faviconError ? (
-          <img
-            src={item.faviconUrl}
-            alt={item.name}
-            className="w-8 h-8 rounded-md object-contain"
-            onError={() => setFaviconError(true)}
-          />
-        ) : (
-          <GlobeAltIcon className="w-8 h-8 text-white/70" />
-        )}
-      </div>
-      <IconLabel name={item.name} />
+        <div
+          className="relative z-10 w-14 h-14 rounded-xl flex items-center justify-center
+                     bg-white/10 backdrop-blur-sm border border-white/20"
+        >
+          {item.faviconUrl && !faviconError ? (
+            <img
+              src={item.faviconUrl}
+              alt={item.name}
+              className="w-8 h-8 rounded-md object-contain"
+              onError={() => setFaviconError(true)}
+            />
+          ) : (
+            <GlobeAltIcon className="w-8 h-8 text-white/70" />
+          )}
+        </div>
+        <IconLabel name={item.name} />
+      </IconWrapper>
     </div>
   )
 }

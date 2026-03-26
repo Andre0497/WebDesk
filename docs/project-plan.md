@@ -94,7 +94,7 @@
 |---|---|---|---|---|
 | 5.1 | Einblend-Animationen für Icons | Staggered Fade-in beim Laden der Desktop-Icons | 🟡 Mittel | ✅ Erledigt |
 | 5.2 | Ordner Öffnen/Schließen Animation | `FolderWindow` slide/scale-in mit Framer Motion | 🔴 Hoch | ✅ Erledigt |
-| 5.3 | Icon Hover & Click Animationen | Scale-up on hover, bounce on click | 🟡 Mittel | ⬜ Offen |
+| 5.3 | Icon Hover & Click Animationen | Scale-up on hover, bounce on click | 🟡 Mittel | ✅ Erledigt |
 | 5.4 | Modal Animationen | Fade + Scale für alle Modals | 🟡 Mittel | ⬜ Offen |
 | 5.5 | Glassmorphism auf Fenstern | Backdrop-blur + semi-transparente Hintergründe | 🔴 Hoch | ⬜ Offen |
 | 5.6 | Wallpaper-Auswahl | Mehrere Hintergrundbilder auswählbar (lokal gespeichert) | 🟢 Niedrig | ⬜ Offen |

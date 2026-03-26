@@ -5,6 +5,7 @@ import { motion } from 'framer-motion'
 import { GlobeAltIcon } from '@heroicons/react/24/outline'
 import type { LinkItem } from '../../types'
 import IconLabel from './IconLabel'
+import { IconWrapper } from './IconWrapper'
 
 interface LinkIconProps {
   item: LinkItem
@@ -43,38 +44,42 @@ export default function LinkIcon({ item, onContextMenu }: LinkIconProps) {
     <motion.div
       ref={setNodeRef}
       style={style}
-      animate={{ opacity: isDragging ? 0 : 1, scale: isDragging ? 0.95 : 1 }}
-      transition={{ duration: 0.15 }}
+      animate={
+        isDragging
+          ? { scale: 1.1, rotate: 3, opacity: 0.85 }
+          : { scale: 1, rotate: 0, opacity: 1 }
+      }
+      transition={{ type: 'spring', stiffness: 400, damping: 30 }}
       {...listeners}
       {...attributes}
-      className="flex flex-col items-center justify-start w-[88px] cursor-grab active:cursor-grabbing
-                 group select-none"
-      onDoubleClick={handleDoubleClick}
-      onContextMenu={handleContextMenu}
+      className="w-[88px] cursor-grab active:cursor-grabbing select-none"
       title={item.url}
     >
-      {/* Icon-Container */}
-      <div
-        className="w-14 h-14 rounded-xl flex items-center justify-center
-                   bg-white/10 backdrop-blur-sm border border-white/20
-                   group-hover:bg-white/20 group-hover:scale-110
-                   group-active:scale-95
-                   transition-all duration-150 ease-out"
+      <IconWrapper
+        onDoubleClick={handleDoubleClick}
+        onContextMenu={handleContextMenu}
+        isDragging={isDragging}
       >
-        {item.faviconUrl && !faviconError ? (
-          <img
-            src={item.faviconUrl}
-            alt={item.name}
-            className="w-8 h-8 rounded-md object-contain"
-            onError={() => setFaviconError(true)}
-          />
-        ) : (
-          <GlobeAltIcon className="w-8 h-8 text-white/70" />
-        )}
-      </div>
+        {/* Icon-Container */}
+        <div
+          className="relative z-10 w-14 h-14 rounded-xl flex items-center justify-center
+                     bg-white/10 backdrop-blur-sm border border-white/20"
+        >
+          {item.faviconUrl && !faviconError ? (
+            <img
+              src={item.faviconUrl}
+              alt={item.name}
+              className="w-8 h-8 rounded-md object-contain"
+              onError={() => setFaviconError(true)}
+            />
+          ) : (
+            <GlobeAltIcon className="w-8 h-8 text-white/70" />
+          )}
+        </div>
 
-      {/* Label */}
-      <IconLabel name={item.name} />
+        {/* Label */}
+        <IconLabel name={item.name} />
+      </IconWrapper>
     </motion.div>
   )
 }

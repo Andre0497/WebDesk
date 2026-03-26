@@ -92,7 +92,7 @@
 
 | # | Task | Beschreibung | Priorität | Status |
 |---|---|---|---|---|
-| 5.1 | Einblend-Animationen für Icons | Staggered Fade-in beim Laden der Desktop-Icons | 🟡 Mittel | ⬜ Offen |
+| 5.1 | Einblend-Animationen für Icons | Staggered Fade-in beim Laden der Desktop-Icons | 🟡 Mittel | ✅ Erledigt |
 | 5.2 | Ordner Öffnen/Schließen Animation | `FolderWindow` slide/scale-in mit Framer Motion | 🔴 Hoch | ⬜ Offen |
 | 5.3 | Icon Hover & Click Animationen | Scale-up on hover, bounce on click | 🟡 Mittel | ⬜ Offen |
 | 5.4 | Modal Animationen | Fade + Scale für alle Modals | 🟡 Mittel | ⬜ Offen |

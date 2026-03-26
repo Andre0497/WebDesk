@@ -39,10 +39,17 @@ export default function ContextMenu({ isOpen, x, y, items, onClose }: ContextMen
   return createPortal(
     <div
       ref={menuRef}
-      style={{ top: y, left: x }}
+      style={{
+        top: y,
+        left: x,
+        background: 'var(--glass-bg-modal)',
+        backdropFilter: 'blur(20px)',
+        WebkitBackdropFilter: 'blur(20px)',
+        borderColor: 'var(--glass-border)',
+        boxShadow: '0 10px 40px rgba(0,0,0,0.4)',
+      }}
       className="fixed z-[9999] min-w-48 py-1
-                 bg-gray-800/95 backdrop-blur-sm
-                 border border-white/10 rounded-xl shadow-2xl
+                 border rounded-xl
                  text-white text-sm"
       onClick={e => e.stopPropagation()}
     >

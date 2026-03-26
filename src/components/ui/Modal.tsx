@@ -45,7 +45,8 @@ export default function Modal({
         <Dialog static open={isOpen} onClose={onClose} className="relative z-[9998]">
           {/* Backdrop */}
           <motion.div
-            className="fixed inset-0 bg-black/60 backdrop-blur-sm"
+            className="fixed inset-0 backdrop-blur-sm"
+            style={{ background: 'rgba(0, 0, 0, 0.65)' }}
             variants={shouldReduceMotion ? undefined : overlayVariants}
             initial="hidden"
             animate="visible"
@@ -61,10 +62,20 @@ export default function Modal({
               exit="exit"
             >
               <Dialog.Panel
-                className={`w-full ${sizeClasses[size]} bg-gray-800/95 backdrop-blur-md border border-white/10 rounded-2xl shadow-2xl text-white`}
+                className={`w-full ${sizeClasses[size]} backdrop-blur-md border rounded-2xl text-white`}
+                style={{
+                  background: 'var(--glass-bg-modal)',
+                  backdropFilter: 'blur(20px) saturate(180%)',
+                  WebkitBackdropFilter: 'blur(20px) saturate(180%)',
+                  borderColor: 'var(--glass-border)',
+                  boxShadow: '0 20px 40px rgba(0,0,0,0.6), 0 0 0 1px rgba(255,255,255,0.08)',
+                }}
               >
                 {/* Header */}
-                <div className="flex items-center justify-between px-6 pt-5 pb-4 border-b border-white/10">
+                <div
+                  className="flex items-center justify-between px-6 pt-5 pb-4 border-b"
+                  style={{ borderColor: 'var(--glass-border-light)' }}
+                >
                   <Dialog.Title className="text-lg font-semibold">{title}</Dialog.Title>
                   {showCloseButton && (
                     <button

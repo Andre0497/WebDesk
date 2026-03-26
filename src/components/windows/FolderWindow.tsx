@@ -89,10 +89,15 @@ export default function FolderWindow({
         left: position.x,
         top: position.y,
         transformOrigin: 'center bottom',
+        background: 'var(--glass-bg)',
+        backdropFilter: 'blur(20px) saturate(180%)',
+        WebkitBackdropFilter: 'blur(20px) saturate(180%)',
+        borderColor: 'var(--glass-border)',
+        boxShadow: '0 25px 50px rgba(0,0,0,0.5), 0 0 0 1px rgba(255,255,255,0.05)',
+        willChange: 'transform',
       }}
       className={`fixed z-40 w-80 min-h-40 max-h-[60vh]
-                  bg-gray-800/90 backdrop-blur-md
-                  border border-white/15 rounded-2xl shadow-2xl
+                  border rounded-2xl
                   flex flex-col overflow-hidden
                   ${isDragging ? 'cursor-grabbing' : ''}`}
     >
@@ -110,7 +115,10 @@ export default function FolderWindow({
         </DndContext>
       </div>
 
-      <div className="px-4 py-2 border-t border-white/10 text-xs text-white/40 text-right">
+      <div
+        className="px-4 py-2 border-t text-xs text-white/40 text-right"
+        style={{ borderColor: 'var(--glass-border-light)' }}
+      >
         {items.length} {items.length === 1 ? 'Element' : 'Elemente'}
       </div>
     </motion.div>

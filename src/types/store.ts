@@ -8,6 +8,15 @@ export interface Settings {
   showLabels: boolean // Icon-Label anzeigen?
 }
 
+/** Schema des localStorage-Eintrags 'webdesk-data' */
+export interface StoredData {
+  version: number
+  state: {
+    items: DesktopItem[]
+    settings: Settings
+  }
+}
+
 /** Zustand des Haupt-Stores */
 export interface DesktopState {
   items: DesktopItem[]

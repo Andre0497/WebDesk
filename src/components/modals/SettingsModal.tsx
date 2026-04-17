@@ -9,7 +9,7 @@ interface SettingsModalProps {
 
 function WallpaperPicker() {
   const settings = useDesktopStore(s => s.settings)
-  const setWallpaper = useDesktopStore(s => s.setWallpaper)
+  const updateSettings = useDesktopStore(s => s.updateSettings)
 
   return (
     <div>
@@ -18,7 +18,7 @@ function WallpaperPicker() {
         {WALLPAPERS.map(wallpaper => (
           <button
             key={wallpaper.id}
-            onClick={() => setWallpaper(wallpaper.id)}
+            onClick={() => updateSettings({ wallpaper: wallpaper.id })}
             className={`
               relative rounded-lg overflow-hidden aspect-video border-2 transition-all
               ${

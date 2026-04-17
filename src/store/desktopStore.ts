@@ -106,7 +106,20 @@ export const useDesktopStore = create<DesktopState>()(
     }),
     {
       name: 'webdesk-data',
-      partialize: state => ({ settings: state.settings }),
+      version: 1,
+      migrate: (persistedState: unknown, version: number) => {
+        if (version === 0) {
+          const state = persistedState as DesktopState
+          return {
+            ...state,
+            settings: {
+              ...state.settings,
+              showLabels: true,
+            },
+          }
+        }
+        return persistedState as DesktopState
+      },
     },
   ),
 )

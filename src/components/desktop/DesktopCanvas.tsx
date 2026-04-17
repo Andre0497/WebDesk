@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useEffect } from 'react'
 import {
   DndContext,
   DragOverlay,
@@ -31,10 +31,11 @@ import EditItemModal from '../modals/EditItemModal'
 import SpotlightSearch from '../ui/SpotlightSearch'
 import ConfirmModal from '../modals/ConfirmModal'
 import SettingsModal from '../modals/SettingsModal'
-import { defaultItems } from '../../utils/defaultData'
 import { isFolderItem } from '../../types'
-import type { DesktopItem, FolderItem, LinkItem, Position } from '../../types'
+import type { FolderItem, LinkItem, Position } from '../../types'
 import type { DraggableData } from '../../types'
+import { useDesktopStore } from '../../store/desktopStore'
+import { useUIStore } from '../../store/uiStore'
 
 interface DesktopCanvasProps {
   theme: 'dark' | 'light'
@@ -42,8 +43,32 @@ interface DesktopCanvasProps {
 }
 
 export default function DesktopCanvas({ theme, onToggleTheme }: DesktopCanvasProps) {
-  const [items, setItems] = useState<DesktopItem[]>(defaultItems)
-  const [activeItem, setActiveItem] = useState<DesktopItem | null>(null)
+  const {
+    items,
+    addLink,
+    addFolder,
+    updateItem,
+    deleteItem,
+    moveItem,
+    openFolder,
+    closeFolder,
+  } = useDesktopStore()
+
+  const {
+    isSearchOpen,
+    openSearch,
+    closeSearch,
+    activeModal,
+    editingItemId,
+    openModal,
+    closeModal,
+    confirmAction,
+    setConfirmAction,
+    draggingItemId,
+    setDraggingItemId,
+  } = useUIStore()
+
+  const activeItem = draggingItemId ? (items.find(i => i.id === draggingItemId) ?? null) : null
 
   const sensors = useSensors(
     useSensor(PointerSensor, { activationConstraint: { distance: 8 } }),
@@ -52,7 +77,7 @@ export default function DesktopCanvas({ theme, onToggleTheme }: DesktopCanvasPro
 
   function handleDragStart(event: DragStartEvent) {
     const data = event.active.data.current as DraggableData
-    setActiveItem(data.item)
+    setDraggingItemId(data.item.id)
     document.body.classList.add('is-dragging')
   }
 
@@ -61,7 +86,7 @@ export default function DesktopCanvas({ theme, onToggleTheme }: DesktopCanvasPro
   }
 
   function handleDragEnd(event: DragEndEvent) {
-    setActiveItem(null)
+    setDraggingItemId(null)
     document.body.classList.remove('is-dragging')
 
     const { active, over } = event
@@ -72,61 +97,41 @@ export default function DesktopCanvas({ theme, onToggleTheme }: DesktopCanvasPro
     const activeId = String(active.id)
 
     if (overData?.type === 'folder') {
-      // Prevent dropping an item onto itself
       if (activeId === overData.folderId) return
 
-      setItems(prevItems => {
-        const activeItem = prevItems.find(i => i.id === activeId)
-        if (!activeItem) return prevItems
+      const itemsInFolder = items.filter(i => i.parentId === overData.folderId)
+      const newPos: Position = {
+        col: itemsInFolder.length % 4,
+        row: Math.floor(itemsInFolder.length / 4),
+      }
 
-        const itemsInFolder = prevItems.filter(i => i.parentId === overData.folderId)
-        const newPos: Position = {
-          col: itemsInFolder.length % 4,
-          row: Math.floor(itemsInFolder.length / 4),
-        }
-
-        return prevItems.map(item =>
-          item.id === activeId ? { ...item, position: newPos, parentId: overData.folderId } : item,
-        )
-      })
-
-      // Open the target folder
-      setOpenFolderIds(prev =>
-        prev.includes(overData.folderId) ? prev : [...prev, overData.folderId],
-      )
+      moveItem(activeId, newPos, overData.folderId)
+      openFolder(overData.folderId)
       return
     }
 
     if (overData?.type === 'cell') {
       const newPos: Position = { col: overData.col, row: overData.row }
+      const draggedItem = items.find(i => i.id === activeId)
+      if (!draggedItem) return
 
-      setItems(prevItems => {
-        const activeItem = prevItems.find(i => i.id === activeId)
-        if (!activeItem) return prevItems
+      const existingItem = items.find(
+        i =>
+          i.position.col === newPos.col &&
+          i.position.row === newPos.row &&
+          i.parentId === null &&
+          i.id !== activeId,
+      )
 
-        const existingItem = prevItems.find(
-          i =>
-            i.position.col === newPos.col &&
-            i.position.row === newPos.row &&
-            i.parentId === null &&
-            i.id !== activeId,
-        )
-
-        return prevItems.map(item => {
-          if (item.id === activeId) {
-            return { ...item, position: newPos }
-          }
-          if (existingItem && item.id === existingItem.id) {
-            return { ...item, position: activeItem.position }
-          }
-          return item
-        })
-      })
+      moveItem(activeId, newPos, draggedItem.parentId)
+      if (existingItem) {
+        moveItem(existingItem.id, draggedItem.position, existingItem.parentId)
+      }
     }
   }
 
   function handleDragCancel() {
-    setActiveItem(null)
+    setDraggingItemId(null)
     document.body.classList.remove('is-dragging')
   }
 
@@ -134,35 +139,28 @@ export default function DesktopCanvas({ theme, onToggleTheme }: DesktopCanvasPro
   const iconContextMenu = useContextMenu()
   const folderContextMenu = useContextMenu()
 
-  const [openFolderIds, setOpenFolderIds] = useState<string[]>([])
-  const [isAddLinkOpen, setIsAddLinkOpen] = useState(false)
-  const [isAddFolderOpen, setIsAddFolderOpen] = useState(false)
-  const [editingItem, setEditingItem] = useState<DesktopItem | null>(null)
-  const [isSearchOpen, setIsSearchOpen] = useState(false)
-  const [isSettingsOpen, setIsSettingsOpen] = useState(false)
+  const isAddLinkOpen = activeModal === 'addLink'
+  const isAddFolderOpen = activeModal === 'addFolder'
+  const isSettingsOpen = activeModal === 'settings'
+
+  const editingItem = editingItemId ? (items.find(i => i.id === editingItemId) ?? null) : null
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if ((e.ctrlKey || e.metaKey) && e.key === 'k') {
         e.preventDefault()
-        setIsSearchOpen(prev => !prev)
+        isSearchOpen ? closeSearch() : openSearch()
       }
     }
     window.addEventListener('keydown', handleKeyDown)
     return () => window.removeEventListener('keydown', handleKeyDown)
-  }, [])
-  const [confirmState, setConfirmState] = useState<{
-    isOpen: boolean
-    itemId: string | null
-    itemName: string
-    isFolder: boolean
-  } | null>(null)
+  }, [isSearchOpen, openSearch, closeSearch])
 
   const getChildCount = (folderId: string) =>
     items.filter(item => item.parentId === folderId).length
 
   const handleSettingsClick = () => {
-    setIsSettingsOpen(true)
+    openModal('settings')
   }
 
   const handleContextMenu = (e: React.MouseEvent) => {
@@ -179,27 +177,27 @@ export default function DesktopCanvas({ theme, onToggleTheme }: DesktopCanvasPro
   }
 
   const handleFolderDoubleClick = (id: string) => {
-    setOpenFolderIds(prev => (prev.includes(id) ? prev : [...prev, id]))
+    openFolder(id)
   }
 
   const handleFolderClose = (id: string) => {
-    setOpenFolderIds(prev => prev.filter(fid => fid !== id))
+    closeFolder(id)
   }
 
   const openFolders = items.filter(
-    item => isFolderItem(item) && openFolderIds.includes(item.id),
+    item => isFolderItem(item) && item.isOpen,
   ) as FolderItem[]
 
   const desktopMenuItems = [
     {
       label: 'Neuer Link',
       icon: <PlusIcon />,
-      onClick: () => setIsAddLinkOpen(true),
+      onClick: () => openModal('addLink'),
     },
     {
       label: 'Neuer Ordner',
       icon: <FolderPlusIcon />,
-      onClick: () => setIsAddFolderOpen(true),
+      onClick: () => openModal('addFolder'),
     },
   ]
 
@@ -207,7 +205,7 @@ export default function DesktopCanvas({ theme, onToggleTheme }: DesktopCanvasPro
     {
       label: 'Bearbeiten',
       icon: <PencilIcon />,
-      onClick: () => setEditingItem(items.find(i => i.id === itemId) ?? null),
+      onClick: () => openModal('edit', itemId),
     },
     {
       label: 'Löschen',
@@ -216,12 +214,8 @@ export default function DesktopCanvas({ theme, onToggleTheme }: DesktopCanvasPro
       onClick: () => {
         const item = items.find(i => i.id === itemId)
         if (!item) return
-        setConfirmState({
-          isOpen: true,
-          itemId: item.id,
-          itemName: item.name,
-          isFolder: item.type === 'folder',
-        })
+        setConfirmAction(() => deleteItem(item.id))
+        openModal('confirm', item.id)
       },
     },
   ]
@@ -235,7 +229,7 @@ export default function DesktopCanvas({ theme, onToggleTheme }: DesktopCanvasPro
     {
       label: 'Bearbeiten',
       icon: <PencilIcon />,
-      onClick: () => setEditingItem(items.find(i => i.id === folderId) ?? null),
+      onClick: () => openModal('edit', folderId),
     },
     {
       divider: true,
@@ -245,15 +239,13 @@ export default function DesktopCanvas({ theme, onToggleTheme }: DesktopCanvasPro
       onClick: () => {
         const item = items.find(i => i.id === folderId)
         if (!item) return
-        setConfirmState({
-          isOpen: true,
-          itemId: item.id,
-          itemName: item.name,
-          isFolder: item.type === 'folder',
-        })
+        setConfirmAction(() => deleteItem(item.id))
+        openModal('confirm', item.id)
       },
     },
   ]
+
+  const confirmItem = editingItemId ? items.find(i => i.id === editingItemId) : null
 
   return (
     <DndContext
@@ -291,12 +283,7 @@ export default function DesktopCanvas({ theme, onToggleTheme }: DesktopCanvasPro
             items={items.filter(item => item.parentId === folder.id)}
             onClose={() => handleFolderClose(folder.id)}
             onItemsReorder={updates => {
-              setItems(prev =>
-                prev.map(item => {
-                  const update = updates.find(u => u.id === item.id)
-                  return update ? { ...item, position: update.position } : item
-                }),
-              )
+              updates.forEach(u => updateItem(u.id, { position: u.position }))
             }}
           />
         ))}
@@ -305,7 +292,7 @@ export default function DesktopCanvas({ theme, onToggleTheme }: DesktopCanvasPro
       {/* Taskbar */}
       <Taskbar
         onSettingsClick={handleSettingsClick}
-        onSearchClick={() => setIsSearchOpen(true)}
+        onSearchClick={openSearch}
         theme={theme}
         onToggleTheme={onToggleTheme}
       />
@@ -336,49 +323,57 @@ export default function DesktopCanvas({ theme, onToggleTheme }: DesktopCanvasPro
 
       <AddLinkModal
         isOpen={isAddLinkOpen}
-        onClose={() => setIsAddLinkOpen(false)}
-        onAdd={(link: Omit<LinkItem, 'id' | 'createdAt' | 'updatedAt'>) =>
-          console.log('Link hinzufügen:', link)
-        }
+        onClose={closeModal}
+        onAdd={(link: Omit<LinkItem, 'id' | 'createdAt' | 'updatedAt'>) => {
+          addLink(link)
+          closeModal()
+        }}
       />
 
       <AddFolderModal
         isOpen={isAddFolderOpen}
-        onClose={() => setIsAddFolderOpen(false)}
-        onAdd={folder => console.log('Ordner hinzufügen:', folder)}
+        onClose={closeModal}
+        onAdd={folder => {
+          addFolder(folder)
+          closeModal()
+        }}
       />
 
       <EditItemModal
-        isOpen={editingItem !== null}
-        onClose={() => setEditingItem(null)}
+        isOpen={activeModal === 'edit' && editingItem !== null}
+        onClose={closeModal}
         item={editingItem}
-        onSave={(id, updates) => console.log('Update:', id, updates)}
+        onSave={(id, updates) => {
+          updateItem(id, updates)
+          closeModal()
+        }}
       />
 
       <SpotlightSearch
         isOpen={isSearchOpen}
-        onClose={() => setIsSearchOpen(false)}
+        onClose={closeSearch}
         items={items}
         onOpenFolder={id => handleFolderDoubleClick(id)}
       />
       <ConfirmModal
-        isOpen={confirmState?.isOpen ?? false}
-        onClose={() => setConfirmState(null)}
+        isOpen={activeModal === 'confirm'}
+        onClose={closeModal}
         onConfirm={() => {
-          if (confirmState?.itemId) {
-            console.log('Löschen:', confirmState.itemId) // Task 6.1
+          if (confirmAction) {
+            confirmAction()
           }
+          closeModal()
         }}
-        title={`„${confirmState?.itemName}" löschen?`}
+        title={confirmItem ? `„${confirmItem.name}" löschen?` : 'Löschen?'}
         message={
-          confirmState?.isFolder
-            ? `Der Ordner „${confirmState.itemName}" und alle ${getChildCount(confirmState.itemId ?? '')} enthaltenen Elemente werden unwiderruflich gelöscht.`
-            : `Der Link „${confirmState?.itemName}" wird unwiderruflich gelöscht.`
+          confirmItem?.type === 'folder'
+            ? `Der Ordner „${confirmItem.name}" und alle ${getChildCount(confirmItem.id)} enthaltenen Elemente werden unwiderruflich gelöscht.`
+            : `Der Link „${confirmItem?.name}" wird unwiderruflich gelöscht.`
         }
         confirmLabel="Löschen"
         isDangerous={true}
       />
-      <SettingsModal isOpen={isSettingsOpen} onClose={() => setIsSettingsOpen(false)} />
+      <SettingsModal isOpen={isSettingsOpen} onClose={closeModal} />
     </div>
 
       <DragOverlay dropAnimation={null}>

@@ -99,7 +99,7 @@
 | 5.5 | Glassmorphism auf Fenstern | Backdrop-blur + semi-transparente Hintergründe | 🔴 Hoch | ✅ Erledigt |
 | 5.6 | Wallpaper-Auswahl | Mehrere Hintergrundbilder auswählbar (lokal gespeichert) | 🟢 Niedrig | ✅ Erledigt |
 | 5.7 | Ripple-Effekt auf Buttons | Kleiner Click-Ripple wie Material Design | 🟢 Niedrig | ✅ Erledigt |
-| 5.8 | Ladeanimation / Splash Screen | Kurzer Intro-Screen beim ersten Laden | 🟢 Niedrig | ⬜ Offen |
+| 5.8 | Ladeanimation / Splash Screen | Kurzer Intro-Screen beim ersten Laden | 🟢 Niedrig | ✅ Erledigt |
 
 **Meilenstein M5:** App wirkt „lebendig" und polished ✅
 

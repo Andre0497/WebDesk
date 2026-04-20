@@ -1,6 +1,7 @@
 import { WALLPAPERS } from '../../utils/wallpapers'
 import { useDesktopStore } from '../../store/desktopStore'
 import Modal from '../ui/Modal'
+import { downloadJson } from '../../utils/dataTransfer'
 
 interface SettingsModalProps {
   isOpen: boolean
@@ -48,9 +49,26 @@ function WallpaperPicker() {
 }
 
 export default function SettingsModal({ isOpen, onClose }: SettingsModalProps) {
+  const exportData = useDesktopStore(s => s.exportData)
+
+  const handleExport = () => {
+    const json = exportData()
+    const date = new Date().toISOString().split('T')[0]
+    downloadJson(json, `webdesk-backup-${date}.json`)
+  }
+
   return (
     <Modal isOpen={isOpen} onClose={onClose} title="Einstellungen" size="md">
       <WallpaperPicker />
+      <div className="mt-6 pt-6 border-t border-slate-700">
+        <h3 className="text-sm font-medium text-slate-300 mb-3">Daten</h3>
+        <button
+          onClick={handleExport}
+          className="w-full px-4 py-2 rounded-lg bg-slate-700 hover:bg-slate-600 text-white text-sm font-medium transition-colors text-left"
+        >
+          💾 Konfiguration exportieren
+        </button>
+      </div>
     </Modal>
   )
 }

@@ -1,51 +1,139 @@
-import type { DesktopItem } from '../types'
+import type { DesktopItem, LinkItem, FolderItem } from '../types/desktop'
+import type { Settings } from '../types/store'
+
+export const defaultSettings: Settings = {
+  wallpaper: 'dark-space',
+  theme: 'dark',
+  gridSize: 100,
+  showLabels: true,
+}
 
 export const defaultItems: DesktopItem[] = [
+  // --- Ordner ---
   {
-    id: 'folder-1',
+    id: 'folder-dev',
     type: 'folder',
     name: 'Entwicklung',
     color: '#6366f1',
     emoji: '💻',
     isOpen: false,
-    position: { col: 0, row: 0 },
-    parentId: null,
     createdAt: Date.now(),
     updatedAt: Date.now(),
-  },
+    position: { col: 0, row: 0 },
+    parentId: null,
+  } satisfies FolderItem,
+
   {
-    id: 'link-1',
+    id: 'folder-design',
+    type: 'folder',
+    name: 'Design',
+    color: '#ec4899',
+    emoji: '🎨',
+    isOpen: false,
+    createdAt: Date.now(),
+    updatedAt: Date.now(),
+    position: { col: 1, row: 0 },
+    parentId: null,
+  } satisfies FolderItem,
+
+  // --- Links auf dem Desktop-Root ---
+  {
+    id: 'link-github',
     type: 'link',
     name: 'GitHub',
     url: 'https://github.com',
     faviconUrl: 'https://www.google.com/s2/favicons?sz=64&domain=github.com',
-    position: { col: 0, row: 0 },
-    parentId: 'folder-1',
     createdAt: Date.now(),
     updatedAt: Date.now(),
-  },
+    position: { col: 0, row: 1 },
+    parentId: null,
+  } satisfies LinkItem,
+
   {
-    id: 'link-2',
+    id: 'link-mdn',
     type: 'link',
     name: 'MDN Web Docs',
     url: 'https://developer.mozilla.org',
     faviconUrl: 'https://www.google.com/s2/favicons?sz=64&domain=developer.mozilla.org',
-    position: { col: 1, row: 0 },
-    parentId: 'folder-1',
     createdAt: Date.now(),
     updatedAt: Date.now(),
-  },
-  {
-    id: 'link-3',
-    type: 'link',
-    name: 'YouTube',
-    url: 'https://youtube.com',
-    faviconUrl: 'https://www.google.com/s2/favicons?sz=64&domain=youtube.com',
-    position: { col: 1, row: 0 },
+    position: { col: 1, row: 1 },
     parentId: null,
+  } satisfies LinkItem,
+
+  {
+    id: 'link-vercel',
+    type: 'link',
+    name: 'Vercel',
+    url: 'https://vercel.com',
+    faviconUrl: 'https://www.google.com/s2/favicons?sz=64&domain=vercel.com',
     createdAt: Date.now(),
     updatedAt: Date.now(),
-  },
+    position: { col: 2, row: 1 },
+    parentId: null,
+  } satisfies LinkItem,
+
+  // --- Links im Ordner "Entwicklung" ---
+  {
+    id: 'link-vite',
+    type: 'link',
+    name: 'Vite',
+    url: 'https://vitejs.dev',
+    faviconUrl: 'https://www.google.com/s2/favicons?sz=64&domain=vitejs.dev',
+    createdAt: Date.now(),
+    updatedAt: Date.now(),
+    position: { col: 0, row: 0 },
+    parentId: 'folder-dev',
+  } satisfies LinkItem,
+
+  {
+    id: 'link-react',
+    type: 'link',
+    name: 'React Docs',
+    url: 'https://react.dev',
+    faviconUrl: 'https://www.google.com/s2/favicons?sz=64&domain=react.dev',
+    createdAt: Date.now(),
+    updatedAt: Date.now(),
+    position: { col: 1, row: 0 },
+    parentId: 'folder-dev',
+  } satisfies LinkItem,
+
+  {
+    id: 'link-tailwind',
+    type: 'link',
+    name: 'Tailwind CSS',
+    url: 'https://tailwindcss.com',
+    faviconUrl: 'https://www.google.com/s2/favicons?sz=64&domain=tailwindcss.com',
+    createdAt: Date.now(),
+    updatedAt: Date.now(),
+    position: { col: 2, row: 0 },
+    parentId: 'folder-dev',
+  } satisfies LinkItem,
+
+  // --- Links im Ordner "Design" ---
+  {
+    id: 'link-figma',
+    type: 'link',
+    name: 'Figma',
+    url: 'https://figma.com',
+    faviconUrl: 'https://www.google.com/s2/favicons?sz=64&domain=figma.com',
+    createdAt: Date.now(),
+    updatedAt: Date.now(),
+    position: { col: 0, row: 0 },
+    parentId: 'folder-design',
+  } satisfies LinkItem,
+
+  {
+    id: 'link-coolors',
+    type: 'link',
+    name: 'Coolors',
+    url: 'https://coolors.co',
+    faviconUrl: 'https://www.google.com/s2/favicons?sz=64&domain=coolors.co',
+    createdAt: Date.now(),
+    updatedAt: Date.now(),
+    position: { col: 1, row: 0 },
+    parentId: 'folder-design',
+  } satisfies LinkItem,
 ]
 
 export const folderColors = [
@@ -60,10 +148,3 @@ export const folderColors = [
   '#3b82f6', // Blue
   '#64748b', // Slate
 ]
-
-export const defaultSettings = {
-  wallpaper: 'none',
-  theme: 'dark' as const,
-  gridSize: 100,
-  showLabels: true,
-}

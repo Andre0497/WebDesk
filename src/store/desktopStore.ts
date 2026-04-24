@@ -3,7 +3,7 @@ import { persist } from 'zustand/middleware'
 import type { DesktopState, Settings } from '../types/store'
 import type { LinkItem, FolderItem } from '../types/desktop'
 import { defaultItems, defaultSettings } from '../utils/defaultData'
-import { exportToJson } from '../utils/dataTransfer'
+import { exportToJson, importFromJson } from '../utils/dataTransfer'
 
 export const useDesktopStore = create<DesktopState>()(
   persist(
@@ -92,12 +92,11 @@ export const useDesktopStore = create<DesktopState>()(
 
       importData: (json) => {
         try {
-          const parsed = JSON.parse(json)
-          if (parsed.items && parsed.settings) {
-            set({ items: parsed.items, settings: parsed.settings })
-          }
+          const data = importFromJson(json)
+          set({ items: data.state.items, settings: data.state.settings })
         } catch (e) {
           console.error('Import fehlgeschlagen:', e)
+          throw e
         }
       },
 

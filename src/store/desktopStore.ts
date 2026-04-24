@@ -3,6 +3,7 @@ import { persist } from 'zustand/middleware'
 import type { DesktopState, Settings } from '../types/store'
 import type { LinkItem, FolderItem } from '../types/desktop'
 import { defaultItems, defaultSettings } from '../utils/defaultData'
+import { exportToJson } from '../utils/dataTransfer'
 
 export const useDesktopStore = create<DesktopState>()(
   persist(
@@ -86,7 +87,7 @@ export const useDesktopStore = create<DesktopState>()(
 
       exportData: () => {
         const { items, settings } = get()
-        return JSON.stringify({ version: 1, items, settings }, null, 2)
+        return exportToJson(items, settings)
       },
 
       importData: (json) => {

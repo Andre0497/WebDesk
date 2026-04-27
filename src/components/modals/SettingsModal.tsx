@@ -52,9 +52,32 @@ function WallpaperPicker() {
 export default function SettingsModal({ isOpen, onClose }: SettingsModalProps) {
   const exportData = useDesktopStore(s => s.exportData)
   const importData = useDesktopStore(s => s.importData)
+  const resetToDefaults = useDesktopStore(s => s.resetToDefaults)
   const fileInputRef = useRef<HTMLInputElement>(null)
   const [importError, setImportError] = useState<string | null>(null)
   const [importSuccess, setImportSuccess] = useState(false)
+
+  const handleReset = () => {
+    const confirmed = window.confirm(
+      '⚠️ Achtung: Alle deine gespeicherten Links und Ordner werden unwiderruflich gelöscht und durch die Demo-Daten ersetzt. Fortfahren?',
+    )
+    if (!confirmed) return
+
+    resetToDefaults()
+    onClose()
+
+    const TOAST_DISPLAY_DURATION = 3000
+    const toast = document.createElement('div')
+    toast.textContent = '✅ Werkseinstellungen wiederhergestellt'
+    toast.className =
+      'fixed bottom-20 left-1/2 -translate-x-1/2 bg-green-700 text-white px-4 py-2 rounded-lg z-50'
+    document.body.appendChild(toast)
+    setTimeout(() => {
+      if (document.body.contains(toast)) {
+        document.body.removeChild(toast)
+      }
+    }, TOAST_DISPLAY_DURATION)
+  }
 
   const handleExport = () => {
     const json = exportData()
@@ -129,6 +152,15 @@ export default function SettingsModal({ isOpen, onClose }: SettingsModalProps) {
         {importSuccess && (
           <p className="text-green-400 text-sm mt-2">Import erfolgreich!</p>
         )}
+      </div>
+      <div className="mt-6 pt-6 border-t border-slate-700">
+        <h3 className="text-sm font-medium text-slate-300 mb-3">Gefahrenzone</h3>
+        <button
+          onClick={handleReset}
+          className="w-full px-4 py-2 rounded-lg bg-red-600 hover:bg-red-700 text-white text-sm font-medium transition-colors text-left"
+        >
+          🗑️ Zurücksetzen auf Werkseinstellungen
+        </button>
       </div>
     </Modal>
   )

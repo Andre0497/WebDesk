@@ -101,6 +101,7 @@ export const useDesktopStore = create<DesktopState>()(
       },
 
       resetToDefaults: () => {
+        localStorage.removeItem('webdesk-data');
         set({ items: defaultItems, settings: defaultSettings })
       },
     }),

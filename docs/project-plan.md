@@ -116,7 +116,7 @@
 | 6.3 | Initiale Demo-Daten | Beim ersten Start werden Beispiel-Links/-Ordner geladen | 🟡 Mittel | ✅ Erledigt |
 | 6.4 | JSON-Export | Download der kompletten Desktop-Konfiguration als `.json` | 🟡 Mittel | ✅ Erledigt |
 | 6.5 | JSON-Import | Upload und Einlesen einer Konfig-Datei | 🟡 Mittel | ✅ Erledigt |
-| 6.6 | Reset / Werkseinstellungen | Alles löschen und Demo-Daten wiederherstellen | 🟢 Niedrig | ⬜ Offen |
+| 6.6 | Reset / Werkseinstellungen | Alles löschen und Demo-Daten wiederherstellen | 🟢 Niedrig | ✅ Erledigt |
 
 **Meilenstein M6:** Daten überleben Browser-Refresh, Export/Import funktioniert ✅
 

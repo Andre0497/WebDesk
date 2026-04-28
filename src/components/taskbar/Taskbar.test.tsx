@@ -41,8 +41,7 @@ describe('Taskbar', () => {
 
   it('zeigt die Uhr an', () => {
     render(<Taskbar {...defaultProps} />)
-    // Clock displays formatted time; verify at least one time-like string is present
-    const timeElements = document.querySelectorAll('.font-semibold')
-    expect(timeElements.length).toBeGreaterThan(0)
+    // Clock renders a time string in HH:MM format
+    expect(document.body.textContent).toMatch(/\d{2}:\d{2}/)
   })
 })

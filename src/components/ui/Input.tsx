@@ -1,10 +1,13 @@
+import { useId } from 'react'
+
 interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {
   label?: string
   error?: string
 }
 
 export default function Input({ label, error, className = '', id, ...props }: InputProps) {
-  const inputId = id ?? (label ? label.toLowerCase().replace(/[^a-z0-9]+/g, '-') : undefined)
+  const generatedId = useId()
+  const inputId = id ?? (label ? generatedId : undefined)
 
   return (
     <div className="flex flex-col gap-1.5">

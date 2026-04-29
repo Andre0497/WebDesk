@@ -1,4 +1,4 @@
-import { useEffect } from 'react'
+import { lazy, Suspense, useCallback, useEffect, useMemo } from 'react'
 import {
   DndContext,
   DragOverlay,
@@ -22,20 +22,21 @@ import AnimatedBackground from './AnimatedBackground'
 import DesktopGrid from './DesktopGrid'
 import DragPreview from './DragPreview'
 import Taskbar from '../taskbar/Taskbar'
-import FolderWindow from '../windows/FolderWindow'
 import { useContextMenu } from '../../hooks/useContextMenu'
 import ContextMenu from '../ui/ContextMenu'
-import AddLinkModal from '../modals/AddLinkModal'
-import AddFolderModal from '../modals/AddFolderModal'
-import EditItemModal from '../modals/EditItemModal'
 import SpotlightSearch from '../ui/SpotlightSearch'
-import ConfirmModal from '../modals/ConfirmModal'
-import SettingsModal from '../modals/SettingsModal'
 import { isFolderItem } from '../../types'
 import type { FolderItem, LinkItem, Position } from '../../types'
 import type { DraggableData } from '../../types'
 import { useDesktopStore } from '../../store/desktopStore'
 import { useUIStore } from '../../store/uiStore'
+
+const FolderWindow = lazy(() => import('../windows/FolderWindow'))
+const AddLinkModal = lazy(() => import('../modals/AddLinkModal'))
+const AddFolderModal = lazy(() => import('../modals/AddFolderModal'))
+const EditItemModal = lazy(() => import('../modals/EditItemModal'))
+const ConfirmModal = lazy(() => import('../modals/ConfirmModal'))
+const SettingsModal = lazy(() => import('../modals/SettingsModal'))
 
 interface DesktopCanvasProps {
   theme: 'dark' | 'light'
@@ -85,7 +86,7 @@ export default function DesktopCanvas({ theme, onToggleTheme }: DesktopCanvasPro
     console.log('dragOver', event.over?.id)
   }
 
-  function handleDragEnd(event: DragEndEvent) {
+  const handleDragEnd = useCallback((event: DragEndEvent) => {
     setDraggingItemId(null)
     document.body.classList.remove('is-dragging')
 
@@ -128,7 +129,7 @@ export default function DesktopCanvas({ theme, onToggleTheme }: DesktopCanvasPro
         moveItem(existingItem.id, draggedItem.position, existingItem.parentId)
       }
     }
-  }
+  }, [items, moveItem, openFolder, setDraggingItemId])
 
   function handleDragCancel() {
     setDraggingItemId(null)
@@ -156,8 +157,10 @@ export default function DesktopCanvas({ theme, onToggleTheme }: DesktopCanvasPro
     return () => window.removeEventListener('keydown', handleKeyDown)
   }, [isSearchOpen, openSearch, closeSearch])
 
-  const getChildCount = (folderId: string) =>
-    items.filter(item => item.parentId === folderId).length
+  const getChildCount = useCallback(
+    (folderId: string) => items.filter(item => item.parentId === folderId).length,
+    [items],
+  )
 
   const handleSettingsClick = () => {
     openModal('settings')
@@ -184,9 +187,10 @@ export default function DesktopCanvas({ theme, onToggleTheme }: DesktopCanvasPro
     closeFolder(id)
   }
 
-  const openFolders = items.filter(
-    item => isFolderItem(item) && item.isOpen,
-  ) as FolderItem[]
+  const openFolders = useMemo(
+    () => items.filter(item => isFolderItem(item) && item.isOpen) as FolderItem[],
+    [items],
+  )
 
   const desktopMenuItems = [
     {
@@ -275,19 +279,21 @@ export default function DesktopCanvas({ theme, onToggleTheme }: DesktopCanvasPro
       </div>
 
       {/* Offene Ordner-Fenster */}
-      <AnimatePresence>
-        {openFolders.map(folder => (
-          <FolderWindow
-            key={folder.id}
-            folder={folder}
-            items={items.filter(item => item.parentId === folder.id)}
-            onClose={() => handleFolderClose(folder.id)}
-            onItemsReorder={updates => {
-              updates.forEach(u => updateItem(u.id, { position: u.position }))
-            }}
-          />
-        ))}
-      </AnimatePresence>
+      <Suspense fallback={null}>
+        <AnimatePresence>
+          {openFolders.map(folder => (
+            <FolderWindow
+              key={folder.id}
+              folder={folder}
+              items={items.filter(item => item.parentId === folder.id)}
+              onClose={() => handleFolderClose(folder.id)}
+              onItemsReorder={updates => {
+                updates.forEach(u => updateItem(u.id, { position: u.position }))
+              }}
+            />
+          ))}
+        </AnimatePresence>
+      </Suspense>
 
       {/* Taskbar */}
       <Taskbar
@@ -321,33 +327,55 @@ export default function DesktopCanvas({ theme, onToggleTheme }: DesktopCanvasPro
         onClose={folderContextMenu.close}
       />
 
-      <AddLinkModal
-        isOpen={isAddLinkOpen}
-        onClose={closeModal}
-        onAdd={(link: Omit<LinkItem, 'id' | 'createdAt' | 'updatedAt'>) => {
-          addLink(link)
-          closeModal()
-        }}
-      />
+      <Suspense fallback={<div className="modal-loading" />}>
+        <AddLinkModal
+          isOpen={isAddLinkOpen}
+          onClose={closeModal}
+          onAdd={(link: Omit<LinkItem, 'id' | 'createdAt' | 'updatedAt'>) => {
+            addLink(link)
+            closeModal()
+          }}
+        />
 
-      <AddFolderModal
-        isOpen={isAddFolderOpen}
-        onClose={closeModal}
-        onAdd={folder => {
-          addFolder(folder)
-          closeModal()
-        }}
-      />
+        <AddFolderModal
+          isOpen={isAddFolderOpen}
+          onClose={closeModal}
+          onAdd={folder => {
+            addFolder(folder)
+            closeModal()
+          }}
+        />
 
-      <EditItemModal
-        isOpen={activeModal === 'edit' && editingItem !== null}
-        onClose={closeModal}
-        item={editingItem}
-        onSave={(id, updates) => {
-          updateItem(id, updates)
-          closeModal()
-        }}
-      />
+        <EditItemModal
+          isOpen={activeModal === 'edit' && editingItem !== null}
+          onClose={closeModal}
+          item={editingItem}
+          onSave={(id, updates) => {
+            updateItem(id, updates)
+            closeModal()
+          }}
+        />
+
+        <ConfirmModal
+          isOpen={activeModal === 'confirm'}
+          onClose={closeModal}
+          onConfirm={() => {
+            if (confirmAction) {
+              confirmAction()
+            }
+            closeModal()
+          }}
+          title={confirmItem ? `„${confirmItem.name}" löschen?` : 'Löschen?'}
+          message={
+            confirmItem?.type === 'folder'
+              ? `Der Ordner „${confirmItem.name}" und alle ${getChildCount(confirmItem.id)} enthaltenen Elemente werden unwiderruflich gelöscht.`
+              : `Der Link „${confirmItem?.name}" wird unwiderruflich gelöscht.`
+          }
+          confirmLabel="Löschen"
+          isDangerous={true}
+        />
+        <SettingsModal isOpen={isSettingsOpen} onClose={closeModal} />
+      </Suspense>
 
       <SpotlightSearch
         isOpen={isSearchOpen}
@@ -355,25 +383,6 @@ export default function DesktopCanvas({ theme, onToggleTheme }: DesktopCanvasPro
         items={items}
         onOpenFolder={id => handleFolderDoubleClick(id)}
       />
-      <ConfirmModal
-        isOpen={activeModal === 'confirm'}
-        onClose={closeModal}
-        onConfirm={() => {
-          if (confirmAction) {
-            confirmAction()
-          }
-          closeModal()
-        }}
-        title={confirmItem ? `„${confirmItem.name}" löschen?` : 'Löschen?'}
-        message={
-          confirmItem?.type === 'folder'
-            ? `Der Ordner „${confirmItem.name}" und alle ${getChildCount(confirmItem.id)} enthaltenen Elemente werden unwiderruflich gelöscht.`
-            : `Der Link „${confirmItem?.name}" wird unwiderruflich gelöscht.`
-        }
-        confirmLabel="Löschen"
-        isDangerous={true}
-      />
-      <SettingsModal isOpen={isSettingsOpen} onClose={closeModal} />
     </div>
 
       <DragOverlay dropAnimation={null}>

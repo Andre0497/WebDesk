@@ -45,12 +45,14 @@ export default function Modal({
         <Dialog static open={isOpen} onClose={onClose} className="relative z-[9998]">
           {/* Backdrop */}
           <motion.div
+            data-testid="modal-backdrop"
             className="fixed inset-0 backdrop-blur-sm"
             style={{ background: 'rgba(0, 0, 0, 0.65)' }}
             variants={shouldReduceMotion ? undefined : overlayVariants}
             initial="hidden"
             animate="visible"
             exit="exit"
+            onClick={onClose}
           />
 
           {/* Zentrierter Container */}

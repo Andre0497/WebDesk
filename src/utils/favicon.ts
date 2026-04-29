@@ -1,10 +1,18 @@
 import { extractHostname } from './urlParser'
 
-/** Erzeugt die Favicon-URL via Google S2 Favicon Service */
+const faviconCache = new Map<string, string>()
+
+/** Erzeugt die Favicon-URL via Google S2 Favicon Service (mit Cache) */
 export function getFaviconUrl(url: string, size: 32 | 64 | 128 = 64): string {
   const hostname = extractHostname(url)
   if (!hostname) return ''
-  return `https://www.google.com/s2/favicons?sz=${size}&domain=${hostname}`
+
+  const cacheKey = `${hostname}_${size}`
+  if (faviconCache.has(cacheKey)) return faviconCache.get(cacheKey)!
+
+  const faviconUrl = `https://www.google.com/s2/favicons?sz=${size}&domain=${hostname}`
+  faviconCache.set(cacheKey, faviconUrl)
+  return faviconUrl
 }
 
 /** Prüft ob eine Favicon-URL erreichbar ist (für die Vorschau im Modal) */

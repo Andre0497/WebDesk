@@ -131,7 +131,7 @@
 | 7.1 | Unit Tests für Utility-Funktionen | Vitest für `utils/` Funktionen | 🟡 Mittel | ⬜ Offen |
 | 7.2 | Komponenten-Tests | React Testing Library für kritische Komponenten | 🟡 Mittel | ⬜ Offen |
 | 7.3 | Accessibility-Check | Lighthouse + axe-core Audit | 🟡 Mittel | ⬜ Offen |
-| 7.4 | Performance-Optimierung | Code-Splitting, lazy loading, Bundle-Analyse | 🟡 Mittel | ⬜ Offen |
+| 7.4 | Performance-Optimierung | Code-Splitting, lazy loading, Bundle-Analyse | 🟡 Mittel | ✅ Erledigt |
 | 7.5 | Production Build testen | `npm run build && npm run preview` lokal testen | 🔴 Hoch | ⬜ Offen |
 | 7.6 | GitHub Pages Deployment | GitHub Actions Workflow für automatisches Deployment | 🟡 Mittel | ⬜ Offen |
 | 7.7 | README.md für das Projekt | Installations- und Nutzungsanleitung | 🟢 Niedrig | ⬜ Offen |

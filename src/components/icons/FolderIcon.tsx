@@ -1,3 +1,4 @@
+import React from 'react'
 import { useDraggable, useDroppable } from '@dnd-kit/core'
 import { CSS } from '@dnd-kit/utilities'
 import { motion } from 'framer-motion'
@@ -13,7 +14,7 @@ interface FolderIconProps {
   onContextMenu?: (e: React.MouseEvent, id: string) => void
 }
 
-export default function FolderIcon({
+const FolderIcon = React.memo(function FolderIcon({
   item,
   itemCount = 0,
   onDoubleClick,
@@ -117,4 +118,6 @@ export default function FolderIcon({
       </IconWrapper>
     </motion.div>
   )
-}
+})
+
+export default FolderIcon

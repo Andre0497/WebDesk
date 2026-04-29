@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import React, { useState } from 'react'
 import { useDraggable } from '@dnd-kit/core'
 import { CSS } from '@dnd-kit/utilities'
 import { motion } from 'framer-motion'
@@ -12,7 +12,7 @@ interface LinkIconProps {
   onContextMenu?: (e: React.MouseEvent, id: string) => void
 }
 
-export default function LinkIcon({ item, onContextMenu }: LinkIconProps) {
+const LinkIcon = React.memo(function LinkIcon({ item, onContextMenu }: LinkIconProps) {
   const [faviconError, setFaviconError] = useState(false)
 
   const { attributes, listeners, setNodeRef, transform, isDragging } = useDraggable({
@@ -82,4 +82,6 @@ export default function LinkIcon({ item, onContextMenu }: LinkIconProps) {
       </IconWrapper>
     </motion.div>
   )
-}
+})
+
+export default LinkIcon

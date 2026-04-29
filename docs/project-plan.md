@@ -134,7 +134,7 @@
 | 7.4 | Performance-Optimierung | Code-Splitting, lazy loading, Bundle-Analyse | 🟡 Mittel | ✅ Erledigt |
 | 7.5 | Production Build testen | `npm run build && npm run preview` lokal testen | 🔴 Hoch | ⬜ Offen |
 | 7.6 | GitHub Pages Deployment | GitHub Actions Workflow für automatisches Deployment | 🟡 Mittel | ⬜ Offen |
-| 7.7 | README.md für das Projekt | Installations- und Nutzungsanleitung | 🟢 Niedrig | ⬜ Offen |
+| 7.7 | README.md für das Projekt | Installations- und Nutzungsanleitung | 🟢 Niedrig | ✅ Erledigt |
 
 **Meilenstein M7:** App ist live unter einer öffentlichen URL erreichbar ✅
 

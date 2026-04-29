@@ -327,7 +327,7 @@ export default function DesktopCanvas({ theme, onToggleTheme }: DesktopCanvasPro
         onClose={folderContextMenu.close}
       />
 
-      <Suspense fallback={<div className="modal-loading" />}>
+      <Suspense fallback={<div className="modal-loading" aria-label="Wird geladen…" />}>
         <AddLinkModal
           isOpen={isAddLinkOpen}
           onClose={closeModal}
